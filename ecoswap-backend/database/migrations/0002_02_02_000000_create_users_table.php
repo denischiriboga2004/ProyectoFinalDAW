@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // Esto crea la columna 'id' primero
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('role_id')->nullable()->constrained()->after('id');
+
+            // Colocamos el role_id aquí para que aparezca después de la password
+            $table->foreignId('role_id')->nullable()->constrained(); 
+
             $table->rememberToken();
             $table->timestamps();
         });

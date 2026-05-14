@@ -1,9 +1,9 @@
+import { useEffect } from 'react';
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Login({ status, canResetPassword }) {
@@ -13,88 +13,117 @@ export default function Login({ status, canResetPassword }) {
         remember: false,
     });
 
+    useEffect(() => {
+        return () => {
+            reset('password');
+        };
+    }, []);
+
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
+        post(route('login'));
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#07111F] px-6 text-white">
+            <Head title="Iniciar Sesión - EcoSwap" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            {/* BACKGROUND EFFECTS (Consistentes con Welcome) */}
+            <div className="absolute left-[-150px] top-[-150px] h-[400px] w-[400px] rounded-full bg-[#00C896] opacity-20 blur-3xl"></div>
+            <div className="absolute bottom-[-200px] right-[-100px] h-[500px] w-[500px] rounded-full bg-cyan-400 opacity-10 blur-3xl"></div>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            {/* GRID BACKGROUND */}
+            <div className="absolute inset-0 opacity-5">
+                <div className="h-full w-full bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:60px_60px]"></div>
+            </div>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
+            <div className="relative z-10 w-full max-w-md">
+                {/* LOGO AREA */}
+                <div className="mb-10 text-center">
+                    <Link href="/" className="inline-flex items-center gap-3">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
+                            ♻
+                        </div>
+                        <h1 className="text-3xl font-black tracking-tight">EcoSwap</h1>
+                    </Link>
+                    <p className="mt-4 text-white/60">Bienvenido de nuevo a la economía circular</p>
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
+                {/* LOGIN CARD */}
+                <div className="rounded-[35px] border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-2xl lg:p-10">
+                    {status && (
+                        <div className="mb-4 text-center text-sm font-medium text-[#00C896]">
+                            {status}
+                        </div>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                    <form onSubmit={submit} className="space-y-6">
+                        {/* EMAIL */}
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-white/70" htmlFor="email">
+                                Correo Electrónico
+                            </label>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={data.email}
+                                className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
+                                autoComplete="username"
+                                onChange={(e) => setData('email', e.target.value)}
+                                placeholder="tu@ejemplo.com"
+                                required
+                            />
+                            <InputError message={errors.email} className="mt-2" />
+                        </div>
+
+                        {/* PASSWORD */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="text-sm font-medium text-white/70" htmlFor="password">
+                                    Contraseña
+                                </label>
+                                {canResetPassword && (
+                                    <Link
+                                        href={route('password.request')}
+                                        className="text-xs text-cyan-400 hover:underline"
+                                    >
+                                        ¿Olvidaste tu contraseña?
+                                    </Link>
+                                )}
+                            </div>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
+                                autoComplete="current-password"
+                                onChange={(e) => setData('password', e.target.value)}
+                                placeholder="••••••••"
+                                required
+                            />
+                            <InputError message={errors.password} className="mt-2" />
+                        </div>
+                        {/* SUBMIT */}
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 py-4 text-lg font-bold text-black shadow-xl transition hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                        >
+                            {processing ? 'Iniciando sesión...' : 'Entrar'}
+                        </button>
+                    </form>
+
+                    {/* REGISTER LINK */}
+                    <div className="mt-8 text-center text-sm text-white/50">
+                        ¿No tienes una cuenta?{' '}
+                        <Link href={route('register')} className="font-bold text-white hover:text-[#00C896] transition">
+                            Regístrate gratis
+                        </Link>
+                    </div>
                 </div>
-            </form>
-        </GuestLayout>
+            </div>
+        </div>
     );
 }

@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -17,22 +20,26 @@ class Product extends Model
         'status'
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function type()
-    {
-        return $this->belongsTo(ProductType::class, 'product_type_id');
-    }
-
-    public function images()
+    /**
+     * Renombrado de 'images' a 'productImages' para que coincida 
+     * con Product::with(['productImages']) en web.php
+     */
+    public function productImages(): HasMany
     {
         return $this->hasMany(ProductImage::class);
     }
 
-    public function comments()
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(ProductType::class, 'product_type_id');
+    }
+
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
