@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Admin EcoSwap',
             'email' => 'admin@ecoswap.com',
-            'password' => Hash::make('admin1234'),
+            'password' => Hash::make('123456789'),
             'role_id' => 1, // ID del Admin
             'email_verified_at' => now(),
         ]);
