@@ -6,6 +6,7 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
+        postal_code: '', // Registramos el estado inicial del código postal
         password: '',
         password_confirmation: '',
     });
@@ -85,6 +86,24 @@ export default function Register() {
                                 required
                             />
                             <InputError message={errors.email} className="mt-2" />
+                        </div>
+
+                        {/* POSTAL CODE */}
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-white/70" htmlFor="postal_code">
+                                Código Postal
+                            </label>
+                            <input
+                                id="postal_code"
+                                type="text"
+                                name="postal_code"
+                                value={data.postal_code}
+                                className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
+                                onChange={(e) => setData('postal_code', e.target.value)}
+                                placeholder="Ej. 28001"
+                                required
+                            />
+                            <InputError message={errors.postal_code} className="mt-2" />
                         </div>
 
                         {/* PASSWORDS GRID */}

@@ -31,22 +31,26 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // 1. Añado 'postal_code' a la validación de entrada
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'postal_code' => 'required|string|max:10', // <-- Línea añadida
         ]);
 
+        // 2. Paso el 'postal_code' para que se guarde en la base de datos
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'postal_code' => $request->postal_code, // <-- Línea añadida
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('welcome');
     }
 }
