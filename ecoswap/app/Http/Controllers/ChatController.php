@@ -14,9 +14,8 @@ class ChatController extends Controller
     {
         $authId = auth()->id();
 
-        if ($product->user_id === $authId) {
-            return redirect('/')->with('error', 'No puedes abrir un chat en tu propio producto.');
-        }
+        // Permitimos que el propietario vea la conversación (para revisar mensajes recibidos).
+        // La lógica que evita enviar mensajes a tu propio producto permanece en el método send.
 
         $product->load([
             'user',
@@ -25,19 +24,17 @@ class ChatController extends Controller
         ]);
 
         $product->product_images = $product->productImages->map(function ($img) {
-            $img->url = Storage::url($img->image_path); 
+            $img->url = $img->url ?? (isset($img->image_path) ? Storage::url($img->image_path) : null);
             return $img;
         });
+        $product->images = $product->product_images;
 
+        // Obtener todos los mensajes del producto donde el usuario autenticado
+        // participa como emisor o receptor (funciona tanto para comprador como vendedor).
         $messages = Message::where('product_id', $product->id)
-            ->where(function ($q) use ($authId, $product) {
-                $q->where(function ($sub) use ($authId, $product) {
-                    $sub->where('sender_id', $authId)
-                        ->where('receiver_id', $product->user_id);
-                })->orWhere(function ($sub) use ($authId, $product) {
-                    $sub->where('sender_id', $product->user_id)
-                        ->where('receiver_id', $authId);
-                });
+            ->where(function ($q) use ($authId) {
+                $q->where('sender_id', $authId)
+                  ->orWhere('receiver_id', $authId);
             })
             ->orderBy('created_at', 'asc')
             ->get();
@@ -60,7 +57,7 @@ class ChatController extends Controller
                         'id' => $lastMessage->product->id,
                         'name' => $lastMessage->product->name,
                         'product_images' => $lastMessage->product->productImages->map(function($img) {
-                            return ['url' => Storage::url($img->image_path)]; 
+                            return ['url' => $img->url ?? (isset($img->image_path) ? Storage::url($img->image_path) : null)]; 
                         }),
                     ]
                 ];
@@ -76,19 +73,39 @@ class ChatController extends Controller
 
     public function send(Request $request, Product $product)
     {
-        if ($product->user_id === auth()->id()) {
-            return abort(403, 'Acción no autorizada.');
-        }
-
         $request->validate([
             'content' => 'required|string'
         ]);
 
+        $authId = auth()->id();
+
+        // Determinar destinatario: si el emisor es distinto al propietario del producto,
+        // el receptor será el propietario; si el emisor es el propietario, buscamos
+        // al otro participante en los mensajes existentes.
+        if ($authId !== $product->user_id) {
+            $receiverId = $product->user_id;
+        } else {
+            // El propietario responde: intentar obtener el último otro participante
+            $last = Message::where('product_id', $product->id)
+                ->where(function ($q) use ($authId) {
+                    $q->where('sender_id', '!=', $authId)
+                      ->orWhere('receiver_id', '!=', $authId);
+                })
+                ->latest()
+                ->first();
+
+            if (!$last) {
+                return abort(403, 'No hay destinatario para este producto.');
+            }
+
+            $receiverId = $last->sender_id === $authId ? $last->receiver_id : $last->sender_id;
+        }
+
         Message::create([
-            'sender_id' => auth()->id(),
-            'receiver_id' => $product->user_id,
-            'product_id' => $product->id, 
-            'content' => $request->content
+            'sender_id' => $authId,
+            'receiver_id' => $receiverId,
+            'product_id' => $product->id,
+            'content' => $request->content,
         ]);
 
         return redirect()->back();

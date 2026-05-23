@@ -2,54 +2,70 @@ import { Head, useForm, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function Edit({ product, categories }) {
-    // Soporte para variaciones de nombres en la relación de imágenes enviada por Laravel
     const existingImages = product.product_images || product.productImages || product.images || [];
 
-    // Estado local para almacenar las previsualizaciones de las NUEVAS imágenes seleccionadas
+    const getImageUrl = (image) => {
+        const rawUrl = typeof image === 'string'
+            ? image
+            : image?.url || image?.image_path || image?.path || image?.file_path || image?.image?.path || image?.image?.url || '';
+
+        if (!rawUrl) {
+            return '';
+        }
+
+        if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+            return rawUrl;
+        }
+
+        if (rawUrl.startsWith('/storage/')) {
+            return rawUrl;
+        }
+
+        if (rawUrl.startsWith('storage/')) {
+            return `/${rawUrl}`;
+        }
+
+        if (rawUrl.startsWith('/public/')) {
+            return `/storage/${rawUrl.replace(/^\/public\//, '')}`;
+        }
+
+        return `/storage/${rawUrl.replace(/^public\//, '')}`;
+    };
+
     const [newPreviews, setNewPreviews] = useState([]);
-    
-    // Estado local para llevar el control de los IDs de fotos existentes que el usuario decida borrar
     const [deletedImageIds, setDeletedImageIds] = useState([]);
 
-    // Inicializo el formulario utilizando Inertia useForm
     const { data, setData, post, errors, processing } = useForm({
-        _method: 'PUT',          // Laravel interceptará este campo simulando un PUT sobre la petición POST
+        _method: 'PUT',
         name: product.name || '',
         product_type_id: product.product_type_id || '',
         estimated_value: product.estimated_value || '',
         swap_for: product.swap_for || '',
         description: product.description || '',
         status: product.status || 'active',
-        new_images: [],          // Archivos binarios de las nuevas fotos
-        deleted_images: [],      // Array de IDs de imágenes a eliminar en el servidor
+        new_images: [],
+        deleted_images: [],
     });
 
-    // Manejador para cuando el usuario selecciona nuevos archivos
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
-        
-        // Acumula correctamente los archivos binarios
         setData('new_images', [...data.new_images, ...files]);
 
-        // Generamos URLs temporales para mostrarlas en la interfaz antes de subirlas
         const filePreviews = files.map(file => URL.createObjectURL(file));
         setNewPreviews((prev) => [...prev, ...filePreviews]);
     };
 
-    // Quitar una foto NUEVA que se acaba de seleccionar (antes de enviar)
     const removeNewImage = (indexToRemove) => {
         setData('new_images', data.new_images.filter((_, index) => index !== indexToRemove));
         setNewPreviews(newPreviews.filter((_, index) => index !== indexToRemove));
     };
 
-    // Marcar una foto EXISTENTE para ser eliminada de la Base de Datos
     const markExistingAsDeleted = (imageId) => {
         const updatedDeletedIds = [...deletedImageIds, imageId];
         setDeletedImageIds(updatedDeletedIds);
         setData('deleted_images', updatedDeletedIds);
     };
 
-    // Deshacer la eliminación de una foto existente
     const unmarkExistingAsDeleted = (imageId) => {
         const updatedDeletedIds = deletedImageIds.filter(id => id !== imageId);
         setDeletedImageIds(updatedDeletedIds);
@@ -58,8 +74,6 @@ export default function Edit({ product, categories }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-        // Enviamos mediante POST forzando Multipart FormData para procesar los archivos binarios junto con el _method PUT
         post(`/products/${product.id}`, {
             forceFormData: true,
         });
@@ -71,7 +85,6 @@ export default function Edit({ product, categories }) {
 
             <div className="min-h-screen overflow-x-hidden bg-[#07111F] text-white relative">
                 
-                {/* Fondo decorativo */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     <div className="absolute left-[-200px] top-[-200px] h-[500px] w-[500px] rounded-full bg-[#00C896] opacity-10 blur-3xl"></div>
                 </div>
@@ -105,11 +118,14 @@ export default function Edit({ product, categories }) {
                                     <p className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">Fotos actuales en la galería</p>
                                     <div className="grid grid-cols-3 gap-4">
                                         {existingImages.map((img) => {
-                                            const isDeleted = deletedImageIds.includes(img.id);
+                                            const imageId = img?.id ?? img?.image?.id;
+                                            const isDeleted = imageId && deletedImageIds.includes(imageId);
+                                            const cleanUrl = getImageUrl(img);
+
                                             return (
                                                 <div key={img.id} className="relative h-24 rounded-xl overflow-hidden group border border-white/10 bg-black/40">
                                                     <img 
-                                                        src={img.url} 
+                                                        src={cleanUrl} 
                                                         className={`h-full w-full object-cover transition ${isDeleted ? 'opacity-20 blur-sm grayscale' : ''}`} 
                                                         alt="Producto" 
                                                     />
@@ -139,7 +155,7 @@ export default function Edit({ product, categories }) {
                                 </div>
                             )}
 
-                            {/* 2. Previsualización de Fotos Nuevas seleccionadas */}
+                            {/* 2. Previsualización de Fotos Nuevas */}
                             {newPreviews.length > 0 && (
                                 <div className="mb-6">
                                     <p className="text-xs font-bold uppercase tracking-wider text-[#00C896] mb-3">Fotos nuevas por añadir</p>
@@ -160,7 +176,7 @@ export default function Edit({ product, categories }) {
                                 </div>
                             )}
 
-                            {/* 3. Botón de subida de archivos */}
+                            {/* 3. Botón de subida */}
                             <div>
                                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-2xl cursor-pointer hover:border-[#00C896]/50 bg-white/5 hover:bg-white/10 transition">
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">

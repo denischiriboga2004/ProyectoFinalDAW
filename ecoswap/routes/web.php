@@ -20,13 +20,14 @@ Route::get('/', function () {
 
     $products = $query->get()->map(function ($product) {
         $product->product_images = $product->productImages->map(function ($img) {
-            // CORREGIDO: Evita duplicar la URL si ya se guardó con http:// o /storage en la BD
-            $path = $img->image_path;
-            $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage')) 
-                ? $path 
-                : Storage::url($path); 
+            // CORREGIDO: Usa el campo url cuando existe y solo transforma rutas locales.
+            $path = $img->url ?? $img->image_path;
+            $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage'))
+                ? $path
+                : Storage::url($path);
             return $img;
         });
+        $product->images = $product->product_images;
         return $product;
     });
 
@@ -37,8 +38,8 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
-// Rutas protegidas para usuarios autenticados
-Route::middleware('auth')->group(function () {
+// Rutas protegidas para usuarios autenticados (soporta sesión o token Bearer)
+Route::middleware('auth.session.or.token')->group(function () {
     
     // NUEVA RUTA: Carga únicamente tus productos con sus imágenes públicas
     Route::get('/mis-productos', function () {
@@ -47,13 +48,13 @@ Route::middleware('auth')->group(function () {
             ->get()
             ->map(function ($product) {
                 $product->product_images = $product->productImages->map(function ($img) {
-                    // CORREGIDO: Evita duplicar la URL si ya se guardó con http:// o /storage en la BD
-                    $path = $img->image_path;
-                    $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage')) 
-                        ? $path 
-                        : Storage::url($path); 
+                    $path = $img->url ?? $img->image_path;
+                    $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage'))
+                        ? $path
+                        : Storage::url($path);
                     return $img;
                 });
+                $product->images = $product->product_images;
                 return $product;
             });
 
