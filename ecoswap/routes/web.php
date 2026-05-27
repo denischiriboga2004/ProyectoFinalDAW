@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Models\Province;
 
 // Ruta principal simplificada (oculta tus propios productos si estás logueado)
 Route::get('/', function () {
@@ -31,10 +32,13 @@ Route::get('/', function () {
         return $product;
     });
 
+    $provinces = Province::orderBy('name')->get();
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'products' => $products,
+        'provinces' => $provinces,
     ]);
 })->name('welcome');
 

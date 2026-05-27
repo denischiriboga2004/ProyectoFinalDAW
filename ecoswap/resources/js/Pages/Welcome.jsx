@@ -2,7 +2,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import { useState } from "react";
 import AccountSwitcher from "@/Components/AccountSwitcher";
 
-export default function Welcome({ auth, products }) {
+export default function Welcome({ auth, products, provinces }) {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
@@ -72,6 +72,28 @@ export default function Welcome({ auth, products }) {
             prev === 0 ? images.length - 1 : prev - 1,
         );
     };
+
+    const heroProduct =
+        products && products.length > 0
+            ? products[0]
+            : {
+                  id: "placeholder",
+                  name: "Cámara Vintage",
+                  description: "Busco intercambio por consola o tablet.",
+                  estimated_value: 35,
+                  status: "Disponible",
+                  user: { name: "Usuario", address: { city: "Madrid" } },
+                  product_images: [
+                      {
+                          url: "https://images.unsplash.com/photo-1511994298241-608e28f14fde",
+                      },
+                  ],
+                  images: [
+                      {
+                          url: "https://images.unsplash.com/photo-1511994298241-608e28f14fde",
+                      },
+                  ],
+              };
 
     return (
         <>
@@ -232,78 +254,44 @@ export default function Welcome({ auth, products }) {
                         </div>
                     </div>
 
-                    <div className="relative hidden items-center justify-center p-6 md:flex">
-                        <div className="relative w-full max-w-[360px] xl:max-w-[420px] max-h-[85vh] rounded-[36px] border border-white/10 bg-white/10 p-4 shadow-2xl backdrop-blur-2xl transition-all hover:border-[#00C896]/30">
+                    <div className="relative flex items-center justify-center p-6">
+                        <div className="relative w-full max-w-[300px] sm:max-w-[340px] xl:max-w-[420px] rounded-[28px] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-2xl transition-all hover:border-[#00C896]/30">
                             <img
-                                src="https://images.unsplash.com/photo-1511994298241-608e28f14fde"
-                                alt="Camera"
-                                className="h-[300px] xl:h-[420px] w-full rounded-[26px] object-cover shadow-inner"
+                                src={
+                                    heroProduct.product_images?.[0]?.url ||
+                                    heroProduct.images?.[0]?.url ||
+                                    "https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
+                                }
+                                alt={heroProduct.name}
+                                className="h-[220px] sm:h-[300px] w-full rounded-[20px] object-cover shadow-inner"
                             />
-                            <div className="mt-6 px-2">
+                            <div className="mt-4 px-2">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-2xl xl:text-3xl font-bold">
-                                        Cámara Vintage
+                                    <h3 className="text-lg sm:text-2xl font-bold">
+                                        {heroProduct.name}
                                     </h3>
-                                    <span className="rounded-full bg-[#00C896]/20 px-4 py-1 text-sm font-bold text-[#00C896]">
-                                        Disponible
+                                    <span className="rounded-full bg-[#00C896]/20 px-3 py-1 text-sm font-bold text-[#00C896]">
+                                        {heroProduct.status}
                                     </span>
                                 </div>
-                                <p className="mt-3 text-sm text-white/60 xl:text-base">
-                                    Busco intercambio por consola o tablet.
+                                <p className="mt-2 text-sm text-white/60 line-clamp-2">
+                                    {heroProduct.description}
                                 </p>
-                                <div className="mt-6 flex items-center justify-between">
-                                    <span className="text-lg font-semibold text-cyan-400">
-                                        Madrid
+                                <div className="mt-4 flex items-center justify-between">
+                                    <span className="text-sm font-semibold text-cyan-400">
+                                        {heroProduct.user?.address?.city || heroProduct.user?.name}
                                     </span>
-                                    <button className="rounded-xl bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur-xl transition hover:bg-white/20">
+                                    <button
+                                        onClick={() => {
+                                            setSelectedProduct(heroProduct);
+                                            setCurrentImgIndex(0);
+                                        }}
+                                        className="rounded-xl bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur-xl transition hover:bg-white/20"
+                                    >
                                         Ver producto
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section
-                    id="explore-section"
-                    className="relative px-6 py-8 lg:px-20 z-10"
-                >
-                    <div className="mb-8 grid gap-4 lg:flex lg:items-center lg:justify-between">
-                        <div>
-                            <h2 className="text-4xl font-black">
-                                Filtrar productos
-                            </h2>
-                            <p className="mt-2 text-white/60">
-                                Busca por nombre y selecciona la zona deseada.
-                            </p>
-                        </div>
-                        <div className="grid w-full gap-4 lg:w-[60%] lg:grid-cols-[1.5fr_1fr]">
-                            <label className="relative block">
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) =>
-                                        setSearchQuery(e.target.value)
-                                    }
-                                    placeholder="Buscar productos..."
-                                    className="w-full rounded-3xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
-                                />
-                            </label>
-                            <label className="block">
-                                <select
-                                    value={selectedZone}
-                                    onChange={(e) =>
-                                        setSelectedZone(e.target.value)
-                                    }
-                                    className="w-full rounded-3xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
-                                >
-                                    <option>Todas</option>
-                                    <option>Madrid</option>
-                                    <option>Barcelona</option>
-                                    <option>Valencia</option>
-                                    <option>Sevilla</option>
-                                </select>
-                            </label>
                         </div>
                     </div>
                 </section>
@@ -316,6 +304,34 @@ export default function Welcome({ auth, products }) {
                         <p className="mt-4 text-xl text-white/60">
                             Objetos esperando una segunda vida.
                         </p>
+
+                        <div className="mt-10 grid gap-4 md:grid-cols-[1.5fr_1fr]">
+                            <label className="relative block">
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
+                                    placeholder="Buscar productos..."
+                                    className="w-full rounded-3xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
+                                />
+                            </label>
+                            <label className="block">
+                                    <select
+                                    value={selectedZone}
+                                    onChange={(e) =>
+                                        setSelectedZone(e.target.value)
+                                    }
+                                    className="w-full rounded-3xl border border-white/10 bg-white/10 px-5 py-4 text-black outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
+                                >
+                                    <option key="Todas">Todas</option>
+                                    {provinces && provinces.map((p) => (
+                                        <option key={p.id}>{p.name}</option>
+                                    ))}
+                                </select>
+                            </label>
+                        </div>
                     </div>
 
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
