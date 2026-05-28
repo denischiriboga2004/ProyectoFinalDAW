@@ -23,13 +23,59 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
+                            <div className="hidden space-x-3 sm:-my-px sm:ms-10 sm:flex sm:items-center">
+                                {user.role_id === 1 && (
+                                    <>
+                                        <NavLink
+                                            href={route('dashboard')}
+                                            active={route().current('dashboard')}
+                                        >
+                                            Dashboard
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('dashboard.users')}
+                                            active={route().current('dashboard.users')}
+                                        >
+                                            Usuarios
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('dashboard.products')}
+                                            active={route().current('dashboard.products')}
+                                        >
+                                            Productos
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('dashboard.comments')}
+                                            active={route().current('dashboard.comments')}
+                                        >
+                                            Comentarios
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('dashboard.images')}
+                                            active={route().current('dashboard.images')}
+                                        >
+                                            Imágenes
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('dashboard.roles')}
+                                            active={route().current('dashboard.roles')}
+                                        >
+                                            Roles
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('dashboard.exchanges')}
+                                            active={route().current('dashboard.exchanges')}
+                                        >
+                                            Trueques
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('dashboard.productTypes')}
+                                            active={route().current('dashboard.productTypes')}
+                                        >
+                                            Tipos
+                                        </NavLink>
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -128,12 +174,58 @@ export default function AuthenticatedLayout({ header, children }) {
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
+                        {user.role_id === 1 && (
+                            <>
+                                <ResponsiveNavLink
+                                    href={route('dashboard')}
+                                    active={route().current('dashboard')}
+                                >
+                                    Dashboard
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('dashboard.users')}
+                                    active={route().current('dashboard.users')}
+                                >
+                                    Usuarios
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('dashboard.products')}
+                                    active={route().current('dashboard.products')}
+                                >
+                                    Productos
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('dashboard.comments')}
+                                    active={route().current('dashboard.comments')}
+                                >
+                                    Comentarios
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('dashboard.images')}
+                                    active={route().current('dashboard.images')}
+                                >
+                                    Imágenes
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('dashboard.roles')}
+                                    active={route().current('dashboard.roles')}
+                                >
+                                    Roles
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('dashboard.exchanges')}
+                                    active={route().current('dashboard.exchanges')}
+                                >
+                                    Trueques
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('dashboard.productTypes')}
+                                    active={route().current('dashboard.productTypes')}
+                                >
+                                    Tipos
+                                </ResponsiveNavLink>
+                            </>
+                        )}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">

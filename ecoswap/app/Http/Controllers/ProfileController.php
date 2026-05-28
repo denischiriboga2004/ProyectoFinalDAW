@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Comment;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,6 +25,56 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);
+    }
+
+    public function show(User $user)
+    {
+        $user->load(['role', 'address']);
+
+        $products = $user->products()
+            ->with(['type', 'productImages', 'user', 'comments.user'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($product) {
+                $product->product_images = $product->productImages;
+                return $product;
+            });
+
+        return Inertia::render('Users/Show', [
+            'profileUser' => $user,
+            'products' => $products,
+            'comments' => Comment::with('user')
+                ->where('target_user_id', $user->id)
+                ->where('status', 'active')
+                ->orderBy('created_at', 'desc')
+                ->get(),
+        ]);
+    }
+
+    public function storeComment(Request $request, User $user)
+    {
+        if (!Auth::check() || Auth::id() === $user->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|string|max:2000',
+            'rating' => 'nullable|integer|min:1|max:5',
+        ]);
+
+        $productId = Product::where('user_id', $user->id)->inRandomOrder()->value('id')
+            ?? Product::inRandomOrder()->value('id');
+
+        Comment::create([
+            'user_id' => Auth::id(),
+            'target_user_id' => $user->id,
+            'product_id' => $productId,
+            'content' => $validated['content'],
+            'rating' => $validated['rating'] ?? null,
+            'status' => 'active',
+        ]);
+
+        return Redirect::route('users.show', $user);
     }
 
     /**

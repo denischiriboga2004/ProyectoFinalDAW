@@ -17,6 +17,7 @@ class UserSeeder extends Seeder
             'role_id' => 1,
             'postal_code' => '28001',
             'email_verified_at' => now(),
+            'status' => 'active',
         ]);
 
         User::create([
@@ -26,6 +27,7 @@ class UserSeeder extends Seeder
             'role_id' => 2,
             'postal_code' => '08001',
             'email_verified_at' => now(),
+            'status' => 'inactive',
         ]);
 
         // Si usas la factoría, le pasamos un código postal por defecto para los 20 usuarios aleatorios

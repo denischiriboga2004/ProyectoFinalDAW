@@ -30,7 +30,7 @@ class ProductFactory extends Factory
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),
             'estimated_value' => $this->faker->randomFloat(2, 5, 1000),
-            'status' => 'active',
+            'status' => $this->faker->boolean(80) ? 'active' : 'inactive',
         ];
     }
 }

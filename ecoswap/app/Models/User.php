@@ -16,7 +16,8 @@ class User extends Authenticatable
         'password',
         'role_id',
         'email_verified_at',
-        'postal_code' // Único cambio: añadido para permitir el registro
+        'postal_code',
+        'status',
     ];
 
     protected $hidden = [
@@ -70,6 +71,11 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function profileComments()
+    {
+        return $this->hasMany(Comment::class, 'target_user_id');
     }
 
     public function notifications()
