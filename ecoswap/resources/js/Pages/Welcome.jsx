@@ -7,6 +7,65 @@ export default function Welcome({ auth, products, provinces }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedZone, setSelectedZone] = useState("Todas");
 
+    const postalCodeToProvince = {
+        '01': 'Álava',
+        '02': 'Albacete',
+        '03': 'Alicante',
+        '04': 'Almería',
+        '05': 'Ávila',
+        '06': 'Badajoz',
+        '07': 'Islas Baleares',
+        '08': 'Barcelona',
+        '09': 'Burgos',
+        '10': 'Cáceres',
+        '11': 'Cádiz',
+        '12': 'Castellón',
+        '13': 'Ciudad Real',
+        '14': 'Córdoba',
+        '15': 'A Coruña',
+        '16': 'Cuenca',
+        '17': 'Girona',
+        '18': 'Granada',
+        '19': 'Guadalajara',
+        '20': 'Guipúzcoa',
+        '21': 'Huelva',
+        '22': 'Huesca',
+        '23': 'Jaén',
+        '24': 'León',
+        '25': 'Lleida',
+        '26': 'La Rioja',
+        '27': 'Lugo',
+        '28': 'Madrid',
+        '29': 'Málaga',
+        '30': 'Murcia',
+        '31': 'Navarra',
+        '32': 'Ourense',
+        '33': 'Asturias',
+        '34': 'Palencia',
+        '35': 'Las Palmas',
+        '36': 'Pontevedra',
+        '37': 'Salamanca',
+        '38': 'Santa Cruz de Tenerife',
+        '39': 'Cantabria',
+        '40': 'Segovia',
+        '41': 'Sevilla',
+        '42': 'Soria',
+        '43': 'Tarragona',
+        '44': 'Teruel',
+        '45': 'Toledo',
+        '46': 'Valencia',
+        '47': 'Valladolid',
+        '48': 'Vizcaya',
+        '49': 'Zamora',
+        '50': 'Zaragoza',
+    };
+
+    const getProvinceFromPostalCode = (postalCode) => {
+        const code = (postalCode || "").toString().trim();
+        if (code.length < 2) return null;
+        return postalCodeToProvince[code.slice(0, 2)] || null;
+    };
+
     const filteredProducts =
         products?.filter((product) => {
             const query = searchQuery.trim().toLowerCase();
@@ -14,13 +73,14 @@ export default function Welcome({ auth, products, provinces }) {
             const descriptionMatch = product.description
                 ?.toLowerCase()
                 .includes(query);
-            const productZone =
-                product.user?.address?.city ||
+            const productProvince =
+                getProvinceFromPostalCode(product.user?.postal_code) ||
                 product.user?.address?.province ||
+                product.user?.address?.city ||
                 "Zona desconocida";
             const zoneMatch =
                 selectedZone === "Todas" ||
-                productZone.toLowerCase() === selectedZone.toLowerCase();
+                productProvince.toLowerCase() === selectedZone.toLowerCase();
 
             return (!query || nameMatch || descriptionMatch) && zoneMatch;
         }) || [];
