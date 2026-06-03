@@ -1,7 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function Create({ categories = [], auth }) {
+export default function Create({ categories = [], provinces = [], auth }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     
     // Estado local para guardar las URLs de vista previa de las imágenes
@@ -12,6 +12,7 @@ export default function Create({ categories = [], auth }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         product_type_id: '',
+        province: '',
         estimated_value: '',
         swap_for: '',
         description: '',
@@ -120,6 +121,21 @@ export default function Create({ categories = [], auth }) {
                                     ))}
                                 </select>
                                 {errors.product_type_id && <p className="text-red-400 text-xs mt-1">{errors.product_type_id}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold uppercase mb-2 text-white/60">Provincia</label>
+                                <select
+                                    value={data.province}
+                                    onChange={e => setData('province', e.target.value)}
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
+                                >
+                                    <option value="">Selecciona una provincia</option>
+                                    {provinces.map((province) => (
+                                        <option key={province.id} value={province.name}>{province.name}</option>
+                                    ))}
+                                </select>
+                                {errors.province && <p className="text-red-400 text-xs mt-1">{errors.province}</p>}
                             </div>
 
                             {/* INPUT: Valor Estimado */}

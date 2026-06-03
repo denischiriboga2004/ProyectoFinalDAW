@@ -149,6 +149,9 @@ export default function Show({ profileUser, products, comments, auth }) {
                                         <p className="mt-4 min-h-[40px] line-clamp-2 text-sm text-slate-300">
                                             {product.description}
                                         </p>
+                                        <p className="mt-3 text-sm text-slate-400">
+                                            {product.province || product.user?.address?.province || product.user?.address?.city || 'Ubicación no disponible'}
+                                        </p>
                                         <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-5">
                                             <div className="flex items-center gap-2">
                                                 <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-[#00C896] to-cyan-400 text-[10px] font-bold text-black">

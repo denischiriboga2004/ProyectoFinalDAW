@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Message;
+use App\Models\Notification;
+use App\Mail\MessageReceived;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
@@ -101,12 +104,31 @@ class ChatController extends Controller
             $receiverId = $last->sender_id === $authId ? $last->receiver_id : $last->sender_id;
         }
 
-        Message::create([
+        $message = Message::create([
             'sender_id' => $authId,
             'receiver_id' => $receiverId,
             'product_id' => $product->id,
             'content' => $request->content,
         ]);
+
+        $message->load(['sender', 'receiver', 'product']);
+
+        Notification::create([
+            'user_id' => $receiverId,
+            'type' => 'message',
+            'message' => "Tienes un mensaje nuevo de {$message->sender->name}",
+            'read' => false,
+        ]);
+
+        if (config('mail.send_emails') && $message->receiver && $message->receiver->email) {
+            Mail::to($message->receiver->email)->send(new MessageReceived(
+                $message->receiver->name,
+                $message->sender->name,
+                $message->product->name,
+                $message->content,
+                $message->product->id
+            ));
+        }
 
         return redirect()->back();
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ContactController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,9 @@ Route::get('/', function () {
         'provinces' => $provinces,
     ]);
 })->name('welcome');
+
+Route::get('/contacto', [ContactController::class, 'index'])->name('contacto');
+Route::post('/contacto-enviar', [ContactController::class, 'send'])->name('contacto.send');
 
 // Perfil público de usuario
 Route::get('/users/{user}', [ProfileController::class, 'show'])->name('users.show');

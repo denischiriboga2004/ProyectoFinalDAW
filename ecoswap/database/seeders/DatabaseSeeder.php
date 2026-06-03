@@ -14,10 +14,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             ProductTypeSeeder::class,
+            ProvinceSeeder::class,
             UserSeeder::class,
             ProductSeeder::class,
             CommentSeeder::class,
-            ProvinceSeeder::class,
         ]);
     }
 }

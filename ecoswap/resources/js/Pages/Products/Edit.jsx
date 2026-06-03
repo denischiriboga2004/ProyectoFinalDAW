@@ -1,7 +1,7 @@
 import { Head, useForm, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function Edit({ product, categories }) {
+export default function Edit({ product, categories, provinces = [] }) {
     const existingImages = product.product_images || product.productImages || product.images || [];
 
     const getImageUrl = (image) => {
@@ -39,6 +39,7 @@ export default function Edit({ product, categories }) {
         _method: 'PUT',
         name: product.name || '',
         product_type_id: product.product_type_id || '',
+        province: product.province || '',
         estimated_value: product.estimated_value || '',
         swap_for: product.swap_for || '',
         description: product.description || '',
@@ -224,6 +225,23 @@ export default function Edit({ product, categories }) {
                                     ))}
                                 </select>
                                 {errors.product_type_id && <p className="text-red-400 text-xs mt-1">{errors.product_type_id}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold mb-2 text-white/70">Provincia</label>
+                                <select 
+                                    value={data.province} 
+                                    onChange={e => setData('province', e.target.value)}
+                                    className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
+                                >
+                                    <option value="" disabled className="bg-[#07111F]">Selecciona una provincia</option>
+                                    {provinces.map(province => (
+                                        <option key={province.id} value={province.name} className="bg-[#07111F]">
+                                            {province.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.province && <p className="text-red-400 text-xs mt-1">{errors.province}</p>}
                             </div>
 
                             <div>

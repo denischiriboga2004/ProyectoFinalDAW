@@ -109,7 +109,7 @@ return [
     | used globally for all emails that are sent by your application.
     |
     */
-
+'send_emails' => env('MAIL_SEND_EMAILS', false),
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\ProductImage;
+use App\Models\Province;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; 
 use Inertia\Inertia;
@@ -37,9 +38,11 @@ class ProductController extends Controller
     public function create()
     {
         $categories = ProductType::select('id', 'name')->get();
+        $provinces = Province::orderBy('name')->get();
 
         return Inertia::render('Products/Create', [
-            'categories' => $categories
+            'categories' => $categories,
+            'provinces' => $provinces,
         ]);
     }
 
@@ -49,6 +52,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'product_type_id' => 'required|exists:product_types,id',
+            'province' => 'required|string|max:255|exists:provinces,name',
             'estimated_value' => 'required|numeric|min:0',
             'swap_for' => 'required|string|max:255',
             'description' => 'required|string',
@@ -60,6 +64,7 @@ class ProductController extends Controller
         $product = Auth::user()->products()->create([
             'name' => $validated['name'],
             'product_type_id' => $validated['product_type_id'],
+            'province' => $validated['province'],
             'estimated_value' => $validated['estimated_value'],
             'swap_for' => $validated['swap_for'],
             'description' => $validated['description'],
@@ -101,10 +106,12 @@ class ProductController extends Controller
         $product->product_images = $product->productImages;
 
         $categories = ProductType::select('id', 'name')->get();
+        $provinces = Province::orderBy('name')->get();
 
         return Inertia::render('Products/Edit', [
             'product' => $product,
-            'categories' => $categories
+            'categories' => $categories,
+            'provinces' => $provinces,
         ]);
     }
 
@@ -118,6 +125,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'product_type_id' => 'required|exists:product_types,id',
+            'province' => 'required|string|max:255|exists:provinces,name',
             'estimated_value' => 'required|numeric|min:0',
             'status' => 'required|in:active,pending,swapped',
             'swap_for' => 'nullable|string|max:255',
@@ -129,6 +137,7 @@ class ProductController extends Controller
         $product->update([
             'name' => $request->name,
             'product_type_id' => $request->product_type_id,
+            'province' => $request->province,
             'estimated_value' => $request->estimated_value,
             'status' => $request->status,
             'swap_for' => $request->swap_for,

@@ -138,7 +138,13 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                             <div>
                                 <p className="font-bold text-sm leading-tight">{product.name}</p>
                                 <p className="text-xs text-white/40 mt-0.5">
-                                    vendedor: {product.user?.name}
+                                    vendedor:{' '}
+                                    <Link
+                                        href={route('users.show', product.user?.id)}
+                                        className="text-cyan-300 hover:text-cyan-200 transition"
+                                    >
+                                        {product.user?.name}
+                                    </Link>
                                 </p>
                             </div>
                         </div>
