@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
@@ -11,54 +13,25 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        //
+        $notifications = auth()->user()
+            ->notifications()
+            ->latest()
+            ->get(['id', 'message', 'type', 'read', 'created_at']);
+
+        return Inertia::render('Notifications/Index', [
+            'notifications' => $notifications,
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Mark a notification as read.
      */
-    public function create()
+    public function update(Request $request, Notification $notification)
     {
-        //
-    }
+        abort_if($notification->user_id !== auth()->id(), 403);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $notification->update(['read' => true]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return back();
     }
 }

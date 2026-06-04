@@ -42,6 +42,13 @@ class ChatController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
+        $unreadNotificationCounts = Notification::where('user_id', $authId)
+            ->where('type', 'message')
+            ->where('read', false)
+            ->get()
+            ->groupBy('product_id')
+            ->map->count();
+
         $conversations = Message::where(function ($q) use ($authId) {
                 $q->where('sender_id', $authId)
                   ->orWhere('receiver_id', $authId);
@@ -50,12 +57,13 @@ class ChatController extends Controller
             ->latest() 
             ->get()
             ->groupBy('product_id') 
-            ->map(function ($group) {
+            ->map(function ($group) use ($unreadNotificationCounts) {
                 $lastMessage = $group->first(); 
                 return [
                     'id' => $lastMessage->id,
                     'last_message' => $lastMessage->content,
                     'updated_at' => $lastMessage->created_at,
+                    'unread_count' => $unreadNotificationCounts->get($lastMessage->product->id, 0),
                     'product' => [
                         'id' => $lastMessage->product->id,
                         'name' => $lastMessage->product->name,
@@ -117,6 +125,7 @@ class ChatController extends Controller
             'user_id' => $receiverId,
             'type' => 'message',
             'message' => "Tienes un mensaje nuevo de {$message->sender->name}",
+            'product_id' => $product->id,
             'read' => false,
         ]);
 
@@ -131,5 +140,56 @@ class ChatController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function messages(Product $product)
+    {
+        $authId = auth()->id();
+
+        $messages = Message::where('product_id', $product->id)
+            ->where(function ($q) use ($authId) {
+                $q->where('sender_id', $authId)
+                  ->orWhere('receiver_id', $authId);
+            })
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $unreadNotificationCounts = Notification::where('user_id', $authId)
+            ->where('type', 'message')
+            ->where('read', false)
+            ->get()
+            ->groupBy('product_id')
+            ->map->count();
+
+        $conversations = Message::where(function ($q) use ($authId) {
+                $q->where('sender_id', $authId)
+                  ->orWhere('receiver_id', $authId);
+            })
+            ->with(['product.productImages', 'product.user'])
+            ->latest()
+            ->get()
+            ->groupBy('product_id')
+            ->map(function ($group) use ($unreadNotificationCounts) {
+                $lastMessage = $group->first();
+                return [
+                    'id' => $lastMessage->id,
+                    'last_message' => $lastMessage->content,
+                    'updated_at' => $lastMessage->created_at,
+                    'unread_count' => $unreadNotificationCounts->get($lastMessage->product->id, 0),
+                    'product' => [
+                        'id' => $lastMessage->product->id,
+                        'name' => $lastMessage->product->name,
+                        'product_images' => $lastMessage->product->productImages->map(function ($img) {
+                            return ['url' => $img->url ?? (isset($img->image_path) ? Storage::url($img->image_path) : null)];
+                        }),
+                    ],
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'messages' => $messages,
+            'conversations' => $conversations,
+        ]);
     }
 }

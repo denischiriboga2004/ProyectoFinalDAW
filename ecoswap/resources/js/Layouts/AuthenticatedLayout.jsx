@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const unreadCount = user?.unread_notifications_count ?? 0;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -63,12 +64,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                             Roles
                                         </NavLink>
                                         <NavLink
-                                            href={route('dashboard.exchanges')}
-                                            active={route().current('dashboard.exchanges')}
-                                        >
-                                            Trueques
-                                        </NavLink>
-                                        <NavLink
                                             href={route('dashboard.productTypes')}
                                             active={route().current('dashboard.productTypes')}
                                         >
@@ -80,6 +75,64 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                            <div className="relative ms-3">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <button
+                                            type="button"
+                                            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-white text-gray-500 transition hover:text-gray-700 focus:outline-none"
+                                        >
+                                            <svg
+                                                className="h-5 w-5"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 003 14h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6z" />
+                                                <path d="M9 18a2 2 0 104 0H9z" />
+                                            </svg>
+                                            {unreadCount > 0 && (
+                                                <span className="absolute -end-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-semibold text-white">
+                                                    {unreadCount}
+                                                </span>
+                                            )}
+                                        </button>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content width="72" contentClasses="bg-white">
+                                        <div className="px-4 py-3 border-b border-gray-200 text-sm font-semibold text-gray-900">
+                                            Notificaciones
+                                        </div>
+                                        {user?.unread_notifications?.length > 0 ? (
+                                            user.unread_notifications.map((notification) => (
+                                                <div
+                                                    key={notification.id}
+                                                    className="px-4 py-3 text-sm text-gray-700 border-b border-gray-100"
+                                                >
+                                                    <p>{notification.message}</p>
+                                                    <p className="mt-1 text-xs text-gray-400">
+                                                        {notification.created_at}
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="px-4 py-4 text-sm text-gray-500">
+                                                No hay notificaciones nuevas.
+                                            </div>
+                                        )}
+
+                                        <div className="px-4 py-3">
+                                            <Link
+                                                href={route('notifications.index')}
+                                                className="block rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 text-center hover:bg-gray-200"
+                                            >
+                                                Ver todas
+                                            </Link>
+                                        </div>
+                                    </Dropdown.Content>
+                                </Dropdown>
+                            </div>
+
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -211,12 +264,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current('dashboard.roles')}
                                 >
                                     Roles
-                                </ResponsiveNavLink>
-                                <ResponsiveNavLink
-                                    href={route('dashboard.exchanges')}
-                                    active={route().current('dashboard.exchanges')}
-                                >
-                                    Trueques
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
                                     href={route('dashboard.productTypes')}

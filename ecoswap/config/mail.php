@@ -67,7 +67,7 @@ return [
 
         'sendmail' => [
             'transport' => 'sendmail',
-            'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
+            'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -t -i'),
         ],
 
         'log' => [
@@ -109,7 +109,10 @@ return [
     | used globally for all emails that are sent by your application.
     |
     */
-'send_emails' => env('MAIL_SEND_EMAILS', false),
+
+    'contact_address' => env('CONTACT_DEST_EMAIL', 'dcp00@iesemilidarder.com'),
+    'send_emails' => env('MAIL_SEND_EMAILS', false),
+
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),

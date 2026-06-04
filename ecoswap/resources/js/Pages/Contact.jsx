@@ -1,9 +1,11 @@
-import { Head, Link, useForm, route } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function Contact({ auth }) {
+    const { flash = {} } = usePage().props || {};
     const { data, setData, post, processing, reset, errors } = useForm({
         email: '',
+        motivo: '',
         mensaje: '',
     });
     const [feedback, setFeedback] = useState({ type: null, message: '' });
@@ -12,7 +14,7 @@ export default function Contact({ auth }) {
         event.preventDefault();
         setFeedback({ type: null, message: '' });
 
-        post(route('contacto.send'), {
+        post('/contacto-enviar', {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -43,7 +45,7 @@ export default function Contact({ auth }) {
                     {auth?.user ? (
                         <span className="text-sm text-white/70">Hola, {auth.user.name}</span>
                     ) : (
-                        <Link href={route('login')} className="text-sm text-cyan-300 hover:text-white">
+                        <Link href="/login" className="text-sm text-cyan-300 hover:text-white">
                             Inicia sesión
                         </Link>
                     )}
@@ -57,15 +59,15 @@ export default function Contact({ auth }) {
                         ¿Tienes alguna duda o necesitas ayuda? Envíanos tu mensaje y te responderemos lo antes posible.
                     </p>
 
-                    {feedback.message && (
+                    {(flash.success || feedback.message) && (
                         <div
                             className={`mt-6 rounded-2xl border px-4 py-3 text-sm ${
-                                feedback.type === 'success'
+                                (flash.success || feedback.type === 'success')
                                     ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
                                     : 'border-rose-400/30 bg-rose-500/10 text-rose-200'
                             }`}
                         >
-                            {feedback.message}
+                            {flash.success || feedback.message}
                         </div>
                     )}
 
@@ -94,6 +96,23 @@ export default function Contact({ auth }) {
                         </div>
 
                         <div>
+                            <label htmlFor="motivo" className="text-sm font-semibold text-white/80">
+                                Motivo del contacto
+                            </label>
+                            <input
+                                id="motivo"
+                                type="text"
+                                value={data.motivo}
+                                onChange={(event) => setData('motivo', event.target.value)}
+                                className="mt-3 w-full rounded-3xl border border-white/10 bg-[#061118] px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20"
+                                placeholder="¿Por qué nos escribes?"
+                            />
+                            {errors.motivo && (
+                                <p className="mt-2 text-sm text-rose-400">{errors.motivo}</p>
+                            )}
+                        </div>
+
+                        <div>
                             <label htmlFor="mensaje" className="text-sm font-semibold text-white/80">
                                 Mensaje
                             </label>
@@ -117,11 +136,6 @@ export default function Contact({ auth }) {
                             Enviar mensaje
                         </button>
                     </form>
-
-                    <div className="mt-10 rounded-3xl border border-white/10 bg-[#061118] p-6 text-sm text-white/70">
-                        <p className="font-semibold text-white">Otras formas de contacto</p>
-                        <p className="mt-3">Correo administrativo: <strong>areajuridica@aliad.es</strong></p>
-                    </div>
                 </div>
             </main>
         </div>

@@ -166,6 +166,7 @@ class AdminController extends Controller
 
         return Inertia::render('Dashboard/EditUser', [
             'user' => $user,
+            'roles' => Role::orderBy('name')->get(),
         ]);
     }
 
@@ -252,7 +253,7 @@ class AdminController extends Controller
             'is_main' => 'sometimes|boolean',
         ]);
 
-        ProductImage::create($validated);
+        ProductImage::create(array_merge($validated, ['status' => 'active']));
 
         return redirect()->route('dashboard.images');
     }
@@ -295,9 +296,30 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        ProductType::create($validated);
+        ProductType::create(array_merge($validated, ['status' => 'active']));
 
         return redirect()->route('dashboard.productTypes');
+    }
+
+    public function toggleImageStatus(ProductImage $image)
+    {
+        $this->ensureAdmin();
+
+        // Toggle the `is_main` boolean so admins can mark/unmark main images.
+        $image->is_main = $image->is_main ? 0 : 1;
+        $image->save();
+
+        return back();
+    }
+
+    public function toggleProductTypeStatus(ProductType $type)
+    {
+        $this->ensureAdmin();
+
+        $type->status = $type->status === 'active' ? 'inactive' : 'active';
+        $type->save();
+
+        return back();
     }
 
     public function toggleUserStatus(User $user)

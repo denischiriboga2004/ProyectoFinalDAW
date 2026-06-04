@@ -100,7 +100,7 @@ export default function Welcome({ auth, products, provinces }) {
         <>
             <Head title="EcoSwap" />
 
-            <div className="min-h-screen overflow-x-hidden bg-[#07111F] text-white relative">
+            <div id="top" className="min-h-screen overflow-x-hidden bg-[#07111F] text-white relative">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     <div className="absolute left-[-200px] top-[-200px] h-[500px] w-[500px] rounded-full bg-[#00C896] opacity-20 blur-3xl"></div>
                     <div className="absolute top-20 right-0 h-[600px] w-[600px] translate-x-1/3 rounded-full bg-cyan-400 opacity-20 blur-[120px]"></div>
@@ -122,7 +122,7 @@ export default function Welcome({ auth, products, provinces }) {
 
                         <nav className="hidden items-center gap-10 lg:flex">
                             <a
-                                href="#"
+                                href="#top"
                                 className="text-white/70 transition hover:text-white"
                             >
                                 Inicio
@@ -136,25 +136,25 @@ export default function Welcome({ auth, products, provinces }) {
                                 </a>
                             )}
                             <a
-                                href="#"
+                                href="#explore-section"
                                 className="text-white/70 transition hover:text-white"
                             >
                                 Explorar
                             </a>
                             <a
-                                href="#"
+                                href="#products-section"
                                 className="text-white/70 transition hover:text-white"
                             >
-                                Intercambios
+                                Productos
                             </a>
                             <a
-                                href="#"
+                                href="#how-it-works"
                                 className="text-white/70 transition hover:text-white"
                             >
                                 Cómo funciona
                             </a>
                             <Link
-                                href={route('contacto')}
+                                href="/contacto"
                                 className="text-white/70 transition hover:text-white"
                             >
                                 Contacto
@@ -307,7 +307,7 @@ export default function Welcome({ auth, products, provinces }) {
                     </div>
                 </section>
 
-                <section className="relative px-6 py-10 lg:px-20 z-10">
+                <section id="products-section" className="relative px-6 py-10 lg:px-20 z-10">
                     <div className="mb-16">
                         <h2 className="text-5xl font-black">
                             Productos destacados
@@ -427,7 +427,7 @@ export default function Welcome({ auth, products, provinces }) {
                     </div>
                 </section>
 
-                <section className="relative px-6 py-24 lg:px-20 z-10">
+                <section id="how-it-works" className="relative px-6 py-24 lg:px-20 z-10">
                     <div className="mb-16 text-center">
                         <h2 className="text-5xl font-black">¿Cómo funciona?</h2>
                         <p className="mt-5 text-xl text-white/60">
@@ -661,9 +661,6 @@ export default function Welcome({ auth, products, provinces }) {
                         <div className="flex gap-8 text-white/60">
                             <a href="#" className="transition hover:text-white">
                                 Privacidad
-                            </a>
-                            <a href="#" className="transition hover:text-white">
-                                Contacto
                             </a>
                             <a href="#" className="transition hover:text-white">
                                 Ayuda

@@ -49,7 +49,7 @@ export default function Dashboard({ usersCount, productsCount, commentsCount, ro
                     >
                         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Productos</p>
                         <p className="mt-4 text-3xl font-black text-slate-900">{productsCount}</p>
-                        <p className="mt-3 text-sm text-slate-600">Ver, editar y crear productos.</p>
+                        <p className="mt-3 text-sm text-slate-600">Ver y editar productos.</p>
                     </Link>
                     <Link
                         href={route('dashboard.comments')}
@@ -74,14 +74,6 @@ export default function Dashboard({ usersCount, productsCount, commentsCount, ro
                         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Roles</p>
                         <p className="mt-4 text-3xl font-black text-slate-900">{rolesCount}</p>
                         <p className="mt-3 text-sm text-slate-600">Crear y controlar roles de usuario.</p>
-                    </Link>
-                    <Link
-                        href={route('dashboard.exchanges')}
-                        className="rounded-[32px] border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-                    >
-                        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Trueques</p>
-                        <p className="mt-4 text-3xl font-black text-slate-900">{exchangesCount}</p>
-                        <p className="mt-3 text-sm text-slate-600">Ver y crear propuestas de trueque.</p>
                     </Link>
                     <Link
                         href={route('dashboard.productTypes')}

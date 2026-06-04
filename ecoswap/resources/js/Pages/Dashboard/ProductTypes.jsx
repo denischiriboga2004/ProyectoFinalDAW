@@ -14,17 +14,11 @@ export default function ProductTypes({ types }) {
         <AuthenticatedLayout header={<h1 className="text-3xl font-black text-slate-900">Tipos de producto</h1>}>
             <Head title="Tipos de producto" />
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="mb-6">
                     <div>
                         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Gestión de tipos</p>
-                        <p className="mt-2 text-sm text-slate-600">Crea y filtra los tipos de producto disponibles.</p>
+                        <p className="mt-2 text-sm text-slate-600">Filtra los tipos de producto disponibles.</p>
                     </div>
-                    <Link
-                        href={route('dashboard.productTypes.create')}
-                        className="inline-flex items-center rounded-full bg-slate-900 px-5 py-3 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-slate-700"
-                    >
-                        Nuevo tipo
-                    </Link>
                 </div>
 
                 <div className="mb-5">

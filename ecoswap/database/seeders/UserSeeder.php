@@ -11,10 +11,13 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        $adminPassword = env('ADMIN_PASSWORD');
+        $defaultUserPassword = env('DEFAULT_USER_PASSWORD');
+
         $admin = User::create([
             'name' => 'Admin EcoSwap',
             'email' => 'admin@ecoswap.com',
-            'password' => Hash::make('123456789'),
+            'password' => Hash::make($adminPassword),
             'role_id' => 1,
             'email_verified_at' => now(),
             'status' => 'active',
@@ -52,11 +55,13 @@ class UserSeeder extends Seeder
             ['name' => 'Javier Molina', 'email' => 'javier.molina@example.com'],
         ];
 
+        $defaultUserPassword = env('DEFAULT_USER_PASSWORD');
+
         foreach ($users as $index => $userData) {
             $user = User::create([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
-                'password' => Hash::make('password123'),
+                'password' => Hash::make($defaultUserPassword),
                 'role_id' => 2,
                 'email_verified_at' => now(),
                 'status' => 'active',

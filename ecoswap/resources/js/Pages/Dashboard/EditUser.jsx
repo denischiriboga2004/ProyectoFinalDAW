@@ -6,6 +6,7 @@ export default function EditUser({ auth, user }) {
         name: user.name,
         email: user.email,
         status: user.status || 'active',
+        role_id: user.role_id || null,
     });
 
     const submit = (event) => {
@@ -59,6 +60,21 @@ export default function EditUser({ auth, user }) {
                             >
                                 <option value="active">Activo</option>
                                 <option value="inactive">Inactivo</option>
+                            </select>
+                        </label>
+
+                        <label className="block">
+                            <span className="text-sm font-semibold text-slate-700">Rol</span>
+                            <select
+                                value={form.data.role_id}
+                                onChange={(e) => form.setData('role_id', e.target.value)}
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                            >
+                                <option value="">Sin rol</option>
+                                {/** roles prop injected by controller */}
+                                {roles?.map((r) => (
+                                    <option key={r.id} value={r.id}>{r.name}</option>
+                                ))}
                             </select>
                         </label>
 

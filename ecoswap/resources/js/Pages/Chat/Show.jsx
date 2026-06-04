@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Show({ auth, product, messages, conversations = [] }) {
 
@@ -9,6 +9,40 @@ export default function Show({ auth, product, messages, conversations = [] }) {
 
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
+    const [messagesState, setMessagesState] = useState(messages);
+    const [conversationsState, setConversationsState] = useState(conversations);
+    const messagesEndRef = useRef(null);
+
+    useEffect(() => {
+        setMessagesState(messages);
+    }, [messages]);
+
+    useEffect(() => {
+        setConversationsState(conversations);
+    }, [conversations]);
+
+    useEffect(() => {
+        const refreshChat = async () => {
+            try {
+                const response = await window.axios.get(route('chat.messages', product.id));
+                if (response.data.messages) {
+                    setMessagesState(response.data.messages);
+                }
+                if (response.data.conversations) {
+                    setConversationsState(response.data.conversations);
+                }
+            } catch (error) {
+                console.error('Error refrescando chat:', error);
+            }
+        };
+
+        const interval = window.setInterval(refreshChat, 3000);
+        return () => window.clearInterval(interval);
+    }, [product.id]);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messagesState]);
 
     const submit = (e) => {
         e.preventDefault();
@@ -66,12 +100,12 @@ export default function Show({ auth, product, messages, conversations = [] }) {
 
                     {/* LISTA DE CONVERSACIONES */}
                     <div className="flex-1 overflow-y-auto divide-y divide-white/5">
-                        {conversations.length === 0 ? (
+                        {conversationsState.length === 0 ? (
                             <div className="p-6 text-white/40 text-sm text-center">
                                 No tienes conversaciones aún
                             </div>
                         ) : (
-                            conversations.map((c) => {
+                            conversationsState.map((c) => {
                                 // Comprobamos si este chat es el que está actualmente activo en la URL
                                 const isActive = c.product.id === product.id;
 
@@ -112,9 +146,7 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                                                 </p>
                                                 {/* Badge opcional de mensajes no leídos */}
                                                 {c.unread_count > 0 && (
-                                                    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#00C896] px-1 text-[10px] font-bold text-black">
-                                                        {c.unread_count}
-                                                    </span>
+                                                    <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                                                 )}
                                             </div>
                                         </div>
@@ -162,7 +194,7 @@ export default function Show({ auth, product, messages, conversations = [] }) {
 
                     {/* MESSAGES */}
                     <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#050c16]">
-                        {messages.length === 0 ? (
+                        {messagesState.length === 0 ? (
                             <div className="h-full flex items-center justify-center text-white/40 text-sm">
                                 Inicia la conversación
                             </div>
@@ -170,7 +202,7 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                             (() => {
                                 let lastDate = null;
 
-                                return messages.map((msg) => {
+                                return messagesState.map((msg) => {
                                     const date = new Date(msg.created_at);
                                     const msgDate = date.toDateString();
                                     const isNewDay = msgDate !== lastDate;
@@ -213,6 +245,7 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                                 });
                             })()
                         )}
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* INPUT */}
