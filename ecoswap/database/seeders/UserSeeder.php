@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456789'),
             'role_id' => 2,
             'email_verified_at' => now(),
-            'status' => 'inactive',
+            'status' => 'active',
         ]);
 
         $trial->address()->create([
