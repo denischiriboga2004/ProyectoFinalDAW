@@ -1,11 +1,14 @@
 import { Head, Link, router } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Welcome({ auth, products, provinces }) {
+export default function Welcome({ auth, products, provinces, productTypes, filters }) {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedZone, setSelectedZone] = useState("Todas");
+    const [selectedCategory, setSelectedCategory] = useState(filters?.product_type_id ?? "Todas");
+    const [visibleCount, setVisibleCount] = useState(10);
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
 
 
     const filteredProducts =
@@ -20,44 +23,44 @@ export default function Welcome({ auth, products, provinces }) {
                 product.user?.address?.province ||
                 product.user?.address?.city ||
                 "Zona desconocida";
+            const productCategory = product.product_type_id || product.product_type || null;
             const zoneMatch =
                 selectedZone === "Todas" ||
                 productProvince.toLowerCase() === selectedZone.toLowerCase();
 
-            return (!query || nameMatch || descriptionMatch) && zoneMatch;
+            const categoryMatch =
+                !selectedCategory ||
+                selectedCategory === "Todas" ||
+                String(productCategory) === String(selectedCategory);
+
+            return (!query || nameMatch || descriptionMatch) && zoneMatch && categoryMatch;
         }) || [];
 
-    const handleChatRedirect = (productId) => {
-        if (!auth.user) {
-            router.get(route("login"));
-            return;
-        }
+    const visibleProducts = filteredProducts.slice(0, visibleCount);
+    const hasMoreProducts = filteredProducts.length > visibleCount;
 
+    useEffect(() => {
+        setVisibleCount(10);
+    }, [searchQuery, selectedZone, selectedCategory]);
+
+    const handleChatRedirect = (productId) => {
+        // Intenta ir directamente al chat
+        // Si no está autenticado, la middleware lo redirigirá al login
+        // guardando la URL intended para regresar aquí después
         router.get(route("chat.show", productId));
     };
 
     const handleUploadButtonClick = () => {
-        if (auth.user) {
-            router.get(route("products.create"));
-        } else {
-            router.get(route("login"));
-        }
+        // Intenta ir directamente a crear un producto
+        // Si no está autenticado, la middleware lo redirigirá al login
+        // guardando la URL intended para regresar aquí después
+        router.get(route("products.create"));
     };
 
-    // Abre el chat: si no hay usuario -> login; si hay al menos un producto -> chat del primer producto; sino -> mis productos
+    // Abre el chat: muestra la pantalla de chat vacía sin conversación seleccionada.
+    // Si no hay usuario, la middleware lo redirigirá al login guardando la URL intended.
     const openChatHome = () => {
-        if (!auth.user) {
-            router.get(route("login"));
-            return;
-        }
-
-        const firstProduct =
-            products && products.length > 0 ? products[0] : null;
-        if (firstProduct) {
-            router.get(route("chat.show", firstProduct.id));
-        } else {
-            router.get(route("products.my"));
-        }
+        router.get(route("chat.index"));
     };
 
     const nextImg = (e, images) => {
@@ -136,17 +139,12 @@ export default function Welcome({ auth, products, provinces }) {
                                 </a>
                             )}
                             <a
-                                href="#explore-section"
+                                href="#products-section"
                                 className="text-white/70 transition hover:text-white"
                             >
                                 Explorar
                             </a>
-                            <a
-                                href="#products-section"
-                                className="text-white/70 transition hover:text-white"
-                            >
-                                Productos
-                            </a>
+                           
                             <a
                                 href="#how-it-works"
                                 className="text-white/70 transition hover:text-white"
@@ -171,13 +169,7 @@ export default function Welcome({ auth, products, provinces }) {
 
                         <div className="flex items-center gap-4">
                             {auth.user ? (
-                                <div className="flex items-center gap-6">
-                                    <span className="hidden text-sm font-medium text-white/70 md:block">
-                                        Hola,{" "}
-                                        <span className="text-[#00C896]">
-                                            {auth.user.name}
-                                        </span>
-                                    </span>
+                                <div className="flex items-center gap-4">
                                     {auth.user.role_id === 1 && (
                                         <Link
                                             href={route("dashboard")}
@@ -186,14 +178,56 @@ export default function Welcome({ auth, products, provinces }) {
                                             Dashboard
                                         </Link>
                                     )}
-                                    <Link
-                                        href={route("logout")}
-                                        method="post"
-                                        as="button"
-                                        className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 font-bold text-white transition hover:bg-red-500/20"
+                                    <div
+                                        className="relative"
+                                        tabIndex={0}
+                                        onBlur={(e) => {
+                                            if (!e.currentTarget.contains(e.relatedTarget)) {
+                                                setShowProfileMenu(false);
+                                            }
+                                        }}
                                     >
-                                        Cerrar sesión
-                                    </Link>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setShowProfileMenu(
+                                                    (value) => !value,
+                                                )
+                                            }
+                                            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition hover:bg-white/20 focus:outline-none"
+                                        >
+                                            {auth.user.profile_photo_path ? (
+                                                <img
+                                                    src={`/storage/${auth.user.profile_photo_path}`}
+                                                    alt={auth.user.name}
+                                                    className="h-10 w-10 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#00C896] text-sm font-bold text-black">
+                                                    {auth.user.name?.charAt(0).toUpperCase()}
+                                                </span>
+                                            )}
+                                        </button>
+
+                                        {showProfileMenu && (
+                                            <div className="absolute right-0 mt-2 w-44 rounded-3xl border border-white/10 bg-[#0B1726] p-2 shadow-2xl backdrop-blur-xl">
+                                                <Link
+                                                    href={route('profile.edit')}
+                                                    className="block rounded-2xl px-4 py-3 text-sm text-white transition hover:bg-white/10"
+                                                >
+                                                    Perfil
+                                                </Link>
+                                                <Link
+                                                    href={route('logout')}
+                                                    method="post"
+                                                    as="button"
+                                                    className="block w-full rounded-2xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
+                                                >
+                                                    Cerrar sesión
+                                                </Link>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             ) : (
                                 <>
@@ -238,7 +272,7 @@ export default function Welcome({ auth, products, provinces }) {
 
                         <div className="mt-10 flex flex-wrap gap-5">
                             <a
-                                href="#explore-section"
+                                href="#products-section"
                                 className="rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 px-6 py-4 text-base font-bold text-black shadow-2xl transition hover:scale-105 flex items-center justify-center"
                             >
                                 Explorar Mercado
@@ -307,16 +341,16 @@ export default function Welcome({ auth, products, provinces }) {
                     </div>
                 </section>
 
-                <section id="products-section" className="relative px-6 py-10 lg:px-20 z-10">
+                <section id="products-section" className="relative px-6 pt-32 pb-32 lg:px-20 z-10">
                     <div className="mb-16">
                         <h2 className="text-5xl font-black">
-                            Productos destacados
+                            Descubre productos cerca de ti
                         </h2>
                         <p className="mt-4 text-xl text-white/60">
                             Objetos esperando una segunda vida.
                         </p>
 
-                        <div className="mt-10 grid gap-4 md:grid-cols-[1.5fr_1fr]">
+                        <div className="mt-10 grid gap-4 md:grid-cols-2">
                             <label className="relative block">
                                 <input
                                     type="text"
@@ -325,29 +359,39 @@ export default function Welcome({ auth, products, provinces }) {
                                         setSearchQuery(e.target.value)
                                     }
                                     placeholder="Buscar productos..."
-                                    className="w-full rounded-3xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
+                                    className="w-full rounded-3xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
                                 />
                             </label>
-                            <label className="block">
-                                    <select
+
+                            <div className="flex w-full items-center gap-3">
+                                <select
                                     value={selectedZone}
-                                    onChange={(e) =>
-                                        setSelectedZone(e.target.value)
-                                    }
-                                    className="w-full rounded-3xl border border-white/10 bg-white/10 px-5 py-4 text-black outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
+                                    onChange={(e) => setSelectedZone(e.target.value)}
+                                    className="w-1/2 rounded-3xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
                                 >
-                                    <option key="Todas">Todas</option>
+                                    <option value="Todas">Todas</option>
                                     {provinces && provinces.map((p) => (
-                                        <option key={p.id}>{p.name}</option>
+                                        <option key={p.id} value={p.name}>{p.name}</option>
                                     ))}
                                 </select>
-                            </label>
+
+                                <select
+                                    value={selectedCategory}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="w-1/2 rounded-3xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
+                                >
+                                    <option value="Todas">Todas</option>
+                                    {productTypes && productTypes.map((t) => (
+                                        <option key={t.id} value={t.id}>{t.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {filteredProducts.length > 0 ? (
-                            filteredProducts.map((product) => (
+                        {visibleProducts.length > 0 ? (
+                            visibleProducts.map((product) => (
                                 <div
                                     key={product.id}
                                     className="group overflow-hidden rounded-[35px] border border-white/10 bg-white/10 shadow-2xl backdrop-blur-xl transition duration-500 hover:-translate-y-3 hover:border-[#00C896]/40"
@@ -384,9 +428,17 @@ export default function Welcome({ auth, products, provinces }) {
                                         <p className="mt-4 min-h-[40px] line-clamp-2 text-sm text-white/60">
                                             {product.description}
                                         </p>
-                                        <p className="mt-3 text-sm text-white/50">
-                                            {product.province || product.user?.address?.province || product.user?.address?.city || 'Ubicación no disponible'}
-                                        </p>
+                                        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/50">
+                                            {product.type?.name && (
+                                                <span className="rounded-full bg-cyan-400/10 px-2 py-1 text-xs font-medium text-cyan-400">
+                                                    {product.type.name}
+                                                </span>
+                                            )}
+                                            <span>•</span>
+                                            <span>
+                                                {product.province || product.user?.address?.province || product.user?.address?.city || 'Ubicación no disponible'}
+                                            </span>
+                                        </div>
                                         {product.swap_for && (
                                             <p className="mt-3 text-sm font-medium text-[#00C896]">
                                                 Busca a cambio: {product.swap_for}
@@ -425,9 +477,19 @@ export default function Welcome({ auth, products, provinces }) {
                             </div>
                         )}
                     </div>
+                    {hasMoreProducts && (
+                        <div className="mt-10 flex justify-center">
+                            <button
+                                onClick={() => setVisibleCount((count) => count + 10)}
+                                className="rounded-2xl bg-[#00C896] px-8 py-4 text-base font-bold text-black transition hover:bg-cyan-300"
+                            >
+                                Cargar más
+                            </button>
+                        </div>
+                    )}
                 </section>
 
-                <section id="how-it-works" className="relative px-6 py-24 lg:px-20 z-10">
+                <section id="how-it-works" className="relative px-6 pt-32 pb-24 lg:px-20 z-10">
                     <div className="mb-16 text-center">
                         <h2 className="text-5xl font-black">¿Cómo funciona?</h2>
                         <p className="mt-5 text-xl text-white/60">
@@ -437,15 +499,20 @@ export default function Welcome({ auth, products, provinces }) {
 
                     <div className="grid gap-10 md:grid-cols-3">
                         <div className="rounded-[35px] border border-white/10 bg-white/10 p-10 backdrop-blur-xl transition hover:-translate-y-2">
-                            <div className="text-6xl">📦</div>
+                            <svg className="h-16 w-16 text-[#00C896]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                             <h3 className="mt-8 text-3xl font-bold">Publica</h3>
                             <p className="mt-5 text-white/60">
-                                Sube productos que ya no utilices and dales una
+                                Sube productos que ya no utilices y dales una
                                 nueva oportunidad.
                             </p>
                         </div>
                         <div className="rounded-[35px] border border-white/10 bg-white/10 p-10 backdrop-blur-xl transition hover:-translate-y-2">
-                            <div className="text-6xl">🔍</div>
+                            <svg className="h-16 w-16 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                             <h3 className="mt-8 text-3xl font-bold">
                                 Encuentra
                             </h3>
@@ -454,7 +521,9 @@ export default function Welcome({ auth, products, provinces }) {
                             </p>
                         </div>
                         <div className="rounded-[35px] border border-white/10 bg-white/10 p-10 backdrop-blur-xl transition hover:-translate-y-2">
-                            <div className="text-6xl">💬</div>
+                            <svg className="h-16 w-16 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
                             <h3 className="mt-8 text-3xl font-bold">
                                 Intercambia
                             </h3>
@@ -552,6 +621,17 @@ export default function Welcome({ auth, products, provinces }) {
                                     <h2 className="text-4xl font-black leading-tight">
                                         {selectedProduct.name}
                                     </h2>
+                                    <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                                        {selectedProduct.type?.name && (
+                                            <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-400">
+                                                {selectedProduct.type.name}
+                                            </span>
+                                        )}
+                                        <span className="text-white/40">•</span>
+                                        <span className="text-white/70">
+                                            {selectedProduct.province || selectedProduct.user?.address?.province || selectedProduct.user?.address?.city || 'Ubicación no disponible'}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-8">
@@ -603,47 +683,6 @@ export default function Welcome({ auth, products, provinces }) {
                                         </button>
                                     </div>
 
-                                    <div className="space-y-6 rounded-[28px] border border-white/5 bg-[#061824]/80 p-6">
-                                        <div className="flex items-center justify-between">
-                                            <h4 className="text-xs font-black uppercase tracking-widest text-white/40">
-                                                Comentarios del producto
-                                            </h4>
-                                            <span className="text-xs uppercase tracking-[0.25em] text-cyan-300">
-                                                {selectedProduct.comments?.length ?? 0}
-                                            </span>
-                                        </div>
-                                        {selectedProduct.comments?.length ? (
-                                            <div className="space-y-4">
-                                                {selectedProduct.comments.map((comment) => (
-                                                    <div key={comment.id} className="rounded-[24px] border border-white/10 bg-[#0f2230] p-4">
-                                                        <div className="flex items-center justify-between gap-3">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-black text-cyan-300">
-                                                                    {comment.user?.name?.charAt(0) ?? 'U'}
-                                                                </div>
-                                                                <div>
-                                                                    <p className="text-sm font-semibold text-white">{comment.user?.name ?? 'Usuario'}</p>
-                                                                    <p className="text-xs text-slate-500">{new Date(comment.created_at).toLocaleDateString()}</p>
-                                                                </div>
-                                                            </div>
-                                                            {comment.rating ? (
-                                                                <span className="rounded-full bg-slate-800 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-slate-200">
-                                                                    {comment.rating} / 5
-                                                                </span>
-                                                            ) : null}
-                                                        </div>
-                                                        <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                                                            {comment.content}
-                                                        </p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-sm leading-relaxed text-slate-400">
-                                                Este producto no tiene comentarios aún.
-                                            </p>
-                                        )}
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -658,13 +697,15 @@ export default function Welcome({ auth, products, provinces }) {
                                 Plataforma de economía circular moderna.
                             </p>
                         </div>
-                        <div className="flex gap-8 text-white/60">
-                            <a href="#" className="transition hover:text-white">
-                                Privacidad
-                            </a>
-                            <a href="#" className="transition hover:text-white">
-                                Ayuda
-                            </a>
+                        <div className="flex flex-col items-center gap-4 md:flex-row md:gap-8">
+                            <div className="flex gap-8 text-white/60">
+                                <a href="#" className="transition hover:text-white">
+                                    Privacidad
+                                </a>
+                                <a href="/contacto" className="transition hover:text-white">
+                                    Ayuda
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </footer>

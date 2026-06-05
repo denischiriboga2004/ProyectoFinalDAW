@@ -3,6 +3,7 @@ import InputError from '@/Components/InputError';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
+
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -11,10 +12,8 @@ export default function Register() {
     });
 
     useEffect(() => {
-        return () => {
-            reset('password', 'password_confirmation');
-        };
-    }, []);
+        return () => reset('password', 'password_confirmation');
+    }, [reset]);
 
     const submit = (e) => {
         e.preventDefault();
@@ -59,7 +58,7 @@ export default function Register() {
                                 id="name"
                                 name="name"
                                 value={data.name}
-                                className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
+                                className="w-full rounded-2xl border border-white/10 bg-[#07111F] p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
                                 autoComplete="name"
                                 onChange={(e) => setData('name', e.target.value)}
                                 placeholder="Ej. Juan Pérez"
@@ -78,7 +77,7 @@ export default function Register() {
                                 type="email"
                                 name="email"
                                 value={data.email}
-                                className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
+                                className="w-full rounded-2xl border border-white/10 bg-[#07111F] p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
                                 autoComplete="username"
                                 onChange={(e) => setData('email', e.target.value)}
                                 placeholder="tu@email.com"
@@ -99,7 +98,7 @@ export default function Register() {
                                     type="password"
                                     name="password"
                                     value={data.password}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
                                     autoComplete="new-password"
                                     onChange={(e) => setData('password', e.target.value)}
                                     placeholder="••••••••"
@@ -117,7 +116,7 @@ export default function Register() {
                                     type="password"
                                     name="password_confirmation"
                                     value={data.password_confirmation}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] p-4 text-white placeholder:text-white/30 focus:border-[#00C896] focus:ring-0 focus:outline-none transition-all"
                                     autoComplete="new-password"
                                     onChange={(e) => setData('password_confirmation', e.target.value)}
                                     placeholder="••••••••"
@@ -150,7 +149,7 @@ export default function Register() {
 
                 {/* TERMS FOOTER */}
                 <p className="mt-8 text-center text-xs text-white/30">
-                    Al registrarte, aceptas nuestros Términos de Servicio y 
+                    Al registrarte, aceptas nuestros Términos de Servicio y
                     la Política de Privacidad de EcoSwap.
                 </p>
             </div>

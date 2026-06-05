@@ -1,10 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function CreateComment({ users, products }) {
+export default function CreateComment({ users }) {
     const form = useForm({
         user_id: users?.[0]?.id || '',
-        product_id: products?.[0]?.id || '',
+        target_user_id: users?.[0]?.id || '',
         content: '',
         status: 'active',
     });
@@ -33,14 +33,14 @@ export default function CreateComment({ users, products }) {
                             </select>
                         </label>
                         <label className="block">
-                            <span className="text-sm font-semibold text-slate-700">Producto</span>
+                            <span className="text-sm font-semibold text-slate-700">Perfil objetivo</span>
                             <select
-                                value={form.data.product_id}
-                                onChange={(e) => form.setData('product_id', e.target.value)}
+                                value={form.data.target_user_id}
+                                onChange={(e) => form.setData('target_user_id', e.target.value)}
                                 className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
                             >
-                                {products.map((product) => (
-                                    <option key={product.id} value={product.id}>{product.name}</option>
+                                {users.map((user) => (
+                                    <option key={user.id} value={user.id}>{user.name}</option>
                                 ))}
                             </select>
                         </label>

@@ -30,7 +30,8 @@ class AuthenticateWithSessionOrToken
             }
         }
 
-        // Si no hay autenticación válida, redirigir a login
+        // Si no hay autenticación válida, guardar la URL intended y redirigir a login
+        session(['url.intended' => $request->getRequestUri()]);
         return redirect()->route('login');
     }
 

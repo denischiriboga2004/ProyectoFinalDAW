@@ -47,10 +47,10 @@ class CommentSeeder extends Seeder
                 Comment::create([
                     'user_id' => $commenterId,
                     'target_user_id' => $targetUser->id,
-                    'product_id' => $productIds[array_rand($productIds)],
+                    'product_id' => null,
                     'content' => $comments[array_rand($comments)],
                     'rating' => rand(3, 5),
-                    'status' => 'approved',
+                    'status' => 'active',
                 ]);
             }
         }

@@ -64,7 +64,7 @@ export default function AccountSwitcher() {
                                 placeholder="Email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-white placeholder-white/40 outline-none focus:border-[#00C896]"
+                                className="w-full bg-[#07111F] border border-white/10 rounded-xl px-4 py-2 text-white placeholder-white/40 outline-none focus:border-[#00C896]"
                                 required
                             />
                             <input
@@ -72,7 +72,7 @@ export default function AccountSwitcher() {
                                 placeholder="Contraseña"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-white placeholder-white/40 outline-none focus:border-[#00C896]"
+                                className="w-full bg-[#07111F] border border-white/10 rounded-xl px-4 py-2 text-white placeholder-white/40 outline-none focus:border-[#00C896]"
                                 required
                             />
 

@@ -232,13 +232,13 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'product_id' => 'required|exists:products,id',
+            'target_user_id' => 'required|exists:users,id',
             'content' => 'required|string|max:2000',
             'rating' => 'nullable|integer|min:1|max:5',
             'status' => 'required|in:active,inactive',
         ]);
 
-        Comment::create($validated);
+        Comment::create(array_merge($validated, ['product_id' => null]));
 
         return redirect()->route('dashboard.comments');
     }

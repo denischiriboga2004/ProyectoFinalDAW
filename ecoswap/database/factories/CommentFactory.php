@@ -22,7 +22,7 @@ class CommentFactory extends Factory
         return [
             'user_id' => $author->id,
             'target_user_id' => $target->id,
-            'product_id' => Product::inRandomOrder()->first()->id ?? 1,
+            'product_id' => null,
             'content' => $this->faker->paragraph(),
             'rating' => $this->faker->optional()->numberBetween(1, 5),
             'status' => $this->faker->randomElement(['active', 'inactive']),

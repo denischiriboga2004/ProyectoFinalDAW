@@ -34,6 +34,7 @@ export default function Edit({ product, categories, provinces = [] }) {
 
     const [newPreviews, setNewPreviews] = useState([]);
     const [deletedImageIds, setDeletedImageIds] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const { data, setData, post, errors, processing } = useForm({
         _method: 'PUT',
@@ -124,10 +125,10 @@ export default function Edit({ product, categories, provinces = [] }) {
                                             const cleanUrl = getImageUrl(img);
 
                                             return (
-                                                <div key={img.id} className="relative h-24 rounded-xl overflow-hidden group border border-white/10 bg-black/40">
+                                                <div key={img.id} className="relative h-24 rounded-xl overflow-hidden group border border-white/10 bg-black/40 cursor-pointer" onClick={() => setSelectedImage(getImageUrl(img))}>
                                                     <img 
                                                         src={cleanUrl} 
-                                                        className={`h-full w-full object-cover transition ${isDeleted ? 'opacity-20 blur-sm grayscale' : ''}`} 
+                                                        className={`h-full w-full object-cover transition ${isDeleted ? 'opacity-20 blur-sm grayscale' : 'group-hover:scale-110'}`} 
                                                         alt="Producto" 
                                                     />
                                                     
@@ -162,8 +163,8 @@ export default function Edit({ product, categories, provinces = [] }) {
                                     <p className="text-xs font-bold uppercase tracking-wider text-[#00C896] mb-3">Fotos nuevas por añadir</p>
                                     <div className="grid grid-cols-3 gap-4">
                                         {newPreviews.map((url, index) => (
-                                            <div key={index} className="relative h-24 rounded-xl overflow-hidden group border border-[#00C896]/30">
-                                                <img src={url} className="h-full w-full object-cover" alt="Nueva previsualización" />
+                                            <div key={index} className="relative h-24 rounded-xl overflow-hidden group border border-[#00C896]/30 cursor-pointer" onClick={() => setSelectedImage(url)}>
+                                                <img src={url} className="h-full w-full object-cover group-hover:scale-110 transition" alt="Nueva previsualización" />
                                                 <button 
                                                     type="button"
                                                     onClick={() => removeNewImage(index)}
@@ -204,7 +205,7 @@ export default function Edit({ product, categories, provinces = [] }) {
                                 type="text" 
                                 value={data.name} 
                                 onChange={e => setData('name', e.target.value)}
-                                className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896] focus:ring-2 focus:ring-[#00C896]/30"
+                                className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-[#00C896] focus:ring-2 focus:ring-[#00C896]/30"
                             />
                             {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
                         </div>
@@ -215,7 +216,7 @@ export default function Edit({ product, categories, provinces = [] }) {
                                 <select 
                                     value={data.product_type_id} 
                                     onChange={e => setData('product_type_id', e.target.value)}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
                                 >
                                     <option value="" disabled className="bg-[#07111F]">Selecciona una categoría</option>
                                     {categories.map(category => (
@@ -232,7 +233,7 @@ export default function Edit({ product, categories, provinces = [] }) {
                                 <select 
                                     value={data.province} 
                                     onChange={e => setData('province', e.target.value)}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
                                 >
                                     <option value="" disabled className="bg-[#07111F]">Selecciona una provincia</option>
                                     {provinces.map(province => (
@@ -250,7 +251,7 @@ export default function Edit({ product, categories, provinces = [] }) {
                                     type="number" 
                                     value={data.estimated_value} 
                                     onChange={e => setData('estimated_value', e.target.value)}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
                                 />
                                 {errors.estimated_value && <p className="text-red-400 text-xs mt-1">{errors.estimated_value}</p>}
                             </div>
@@ -261,7 +262,7 @@ export default function Edit({ product, categories, provinces = [] }) {
                             <select 
                                 value={data.status} 
                                 onChange={e => setData('status', e.target.value)}
-                                className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
+                                className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
                             >
                                 <option value="active" className="bg-[#07111F]">Disponible / Activo</option>
                                 <option value="pending" className="bg-[#07111F]">Intercambio en proceso</option>
@@ -277,7 +278,7 @@ export default function Edit({ product, categories, provinces = [] }) {
                                 value={data.swap_for} 
                                 onChange={e => setData('swap_for', e.target.value)}
                                 placeholder="Ej: Una tablet o consola de juegos"
-                                className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
+                                className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-[#00C896]"
                             />
                             {errors.swap_for && <p className="text-red-400 text-xs mt-1">{errors.swap_for}</p>}
                         </div>
@@ -288,7 +289,7 @@ export default function Edit({ product, categories, provinces = [] }) {
                                 value={data.description} 
                                 onChange={e => setData('description', e.target.value)}
                                 rows="4"
-                                className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-white outline-none transition focus:border-[#00C896] resize-none"
+                                className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-[#00C896] resize-none"
                             ></textarea>
                             {errors.description && <p className="text-red-400 text-xs mt-1">{errors.description}</p>}
                         </div>
@@ -311,6 +312,25 @@ export default function Edit({ product, categories, provinces = [] }) {
 
                     </form>
                 </main>
+
+                {/* MODAL PARA VER IMAGEN EN GRANDE */}
+                {selectedImage && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm" onClick={() => setSelectedImage(null)}>
+                        <div className="relative max-w-4xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute -top-10 right-0 text-white text-2xl font-bold hover:text-cyan-400 transition"
+                            >
+                                ✕ Cerrar
+                            </button>
+                            <img
+                                src={selectedImage}
+                                alt="Vista grande"
+                                className="max-w-full max-h-[90vh] rounded-2xl object-contain"
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );

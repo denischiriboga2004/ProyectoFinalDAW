@@ -8,6 +8,7 @@
     use App\Http\Controllers\ContactController;
     use App\Http\Controllers\NotificationController;
     use App\Models\Product;
+    use App\Models\ProductType;
     use Illuminate\Support\Facades\Route;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Storage;
@@ -16,10 +17,21 @@
 
     // Ruta principal simplificada (oculta tus propios productos si estás logueado)
     Route::get('/', function () {
-        $query = Product::with(['productImages', 'user', 'comments.user'])->where('status', 'active');
+        $query = Product::with(['productImages', 'user', 'comments.user', 'type'])->where('status', 'active');
 
         if (Auth::check()) {
             $query->where('user_id', '!=', Auth::id());
+        }
+
+        // Aplicar filtros de query: provincia y tipo de producto (categoría)
+        $selectedProvince = request()->query('province');
+        if ($selectedProvince) {
+            $query->where('province', $selectedProvince);
+        }
+
+        $selectedProductType = request()->query('product_type_id') ?? request()->query('product_type');
+        if ($selectedProductType) {
+            $query->where('product_type_id', $selectedProductType);
         }
 
         $unreadNotificationsByProduct = collect();
@@ -47,12 +59,18 @@
         });
 
         $provinces = Province::orderBy('name')->get();
+        $productTypes = ProductType::orderBy('name')->get();
 
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'products' => $products,
             'provinces' => $provinces,
+            'productTypes' => $productTypes,
+            'filters' => [
+                'province' => $selectedProvince,
+                'product_type_id' => $selectedProductType,
+            ],
         ]);
     })->name('welcome');
 
@@ -85,7 +103,7 @@
         
         // NUEVA RUTA: Carga únicamente tus productos con sus imágenes públicas
         Route::get('/mis-productos', function () {
-            $myProducts = Product::with(['productImages'])
+            $myProducts = Product::with(['productImages', 'type'])
                 ->where('user_id', Auth::id())
                 ->get()
                 ->map(function ($product) {
@@ -156,6 +174,7 @@
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         
         // Chats
+        Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
         Route::get('/chat/{product}', [ChatController::class, 'show'])->name('chat.show');
         Route::get('/chat/{product}/messages', [ChatController::class, 'messages'])->name('chat.messages');
         Route::post('/chat/{product}', [ChatController::class, 'send'])->name('chat.store');

@@ -49,7 +49,14 @@ export default function Show({ profileUser, products, comments, auth }) {
                             href="/"
                             className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.3em] text-slate-300 transition hover:text-white"
                         >
-                            ← Volver al inicio
+                               <div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
+                                ♻
+                            </div>
+                            <h1 className="text-3xl font-black tracking-tight">
+                                EcoSwap
+                            </h1>
+                        </div>
                         </Link>
                         <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.3em] text-slate-200">
                             {profileUser.role?.name ?? 'Usuario'}
@@ -390,48 +397,6 @@ export default function Show({ profileUser, products, comments, auth }) {
                                     >
                                         Chat
                                     </button>
-                                </div>
-
-                                <div className="space-y-6 rounded-[28px] border border-white/5 bg-[#061824]/80 p-6">
-                                    <div className="flex items-center justify-between">
-                                        <h4 className="text-xs font-black uppercase tracking-widest text-white/40">
-                                            Comentarios del producto
-                                        </h4>
-                                        <span className="text-xs uppercase tracking-[0.25em] text-cyan-300">
-                                            {selectedProduct.comments?.length ?? 0}
-                                        </span>
-                                    </div>
-                                    {selectedProduct.comments?.length ? (
-                                        <div className="space-y-4">
-                                            {selectedProduct.comments.map((comment) => (
-                                                <div key={comment.id} className="rounded-[24px] border border-white/10 bg-[#0f2230] p-4">
-                                                    <div className="flex items-center justify-between gap-3">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-black text-cyan-300">
-                                                                {comment.user?.name?.charAt(0) ?? 'U'}
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-sm font-semibold text-white">{comment.user?.name ?? 'Usuario'}</p>
-                                                                <p className="text-xs text-slate-500">{new Date(comment.created_at).toLocaleDateString()}</p>
-                                                            </div>
-                                                        </div>
-                                                        {comment.rating ? (
-                                                            <span className="rounded-full bg-slate-800 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-slate-200">
-                                                                {comment.rating} / 5
-                                                            </span>
-                                                        ) : null}
-                                                    </div>
-                                                    <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                                                        {comment.content}
-                                                    </p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-sm leading-relaxed text-slate-400">
-                                            Este producto no tiene comentarios aún.
-                                        </p>
-                                    )}
                                 </div>
 
                                 <hr className="border-white/5" />

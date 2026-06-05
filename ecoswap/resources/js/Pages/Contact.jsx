@@ -39,9 +39,16 @@ export default function Contact({ auth }) {
 
             <header className="border-b border-white/10 bg-[#0f223b]/60 py-6 backdrop-blur-xl">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-12">
+
                     <Link href="/" className="text-sm font-semibold text-white/70 transition hover:text-white">
-                        ← Volver al inicio
-                    </Link>
+<div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
+                                ♻
+                            </div>
+                            <h1 className="text-3xl font-black tracking-tight">
+                                EcoSwap
+                            </h1>
+                        </div>                    </Link>
                     {auth?.user ? (
                         <span className="text-sm text-white/70">Hola, {auth.user.name}</span>
                     ) : (
