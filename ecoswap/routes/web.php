@@ -38,7 +38,7 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
-// Rutas protegidas para usuarios autenticados (soporta sesión o token Bearer)
+// Rutas protegidas para usuarios autenticados 
 Route::middleware('auth.session.or.token')->group(function () {
     
     // NUEVA RUTA: Carga únicamente tus productos con sus imágenes públicas

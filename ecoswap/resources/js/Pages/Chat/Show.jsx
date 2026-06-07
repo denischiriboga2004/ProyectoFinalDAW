@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Show({ auth, product, messages, conversations = [] }) {
 
@@ -10,6 +10,15 @@ export default function Show({ auth, product, messages, conversations = [] }) {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
 
+    const messagesEndRef = useRef(null);
+
+    // bajar automaticamente al ultimo mensaje
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({
+            behavior: 'smooth',
+        });
+    }, [messages]);
+    //Enviar el emsaje usando una ruta
     const submit = (e) => {
         e.preventDefault();
         if (!data.content.trim()) return;
@@ -19,14 +28,14 @@ export default function Show({ auth, product, messages, conversations = [] }) {
             onSuccess: () => reset(),
         });
     };
-
+    //ir a al img anterior
     const nextImg = (e, images) => {
         e.stopPropagation();
         setCurrentImgIndex((prev) =>
             prev === images.length - 1 ? 0 : prev + 1
         );
     };
-
+    //ir a la imagen posterior
     const prevImg = (e, images) => {
         e.stopPropagation();
         setCurrentImgIndex((prev) =>
@@ -80,12 +89,12 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                                         key={c.id}
                                         href={`/chat/${c.product.id}`}
                                         className={`flex items-center gap-3 px-4 py-3.5 transition-all duration-200 relative before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-[#00C896] ${
-                                            isActive 
-                                                ? 'bg-white/10 before:opacity-100' 
+                                            isActive
+                                                ? 'bg-white/10 before:opacity-100'
                                                 : 'bg-transparent hover:bg-white/5 before:opacity-0'
                                         }`}
                                     >
-                                        {/* ICONO / IMAGEN DEL PRODUCTO (WhatsApp Avatar) */}
+                                        {/* ICONO / IMAGEN DEL PRODUCTO  */}
                                         <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5">
                                             <img
                                                 src={c.product.product_images?.[0]?.url || 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796'}
@@ -100,16 +109,18 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                                                 <p className={`truncate text-[15px] font-semibold ${isActive ? 'text-[#00C896]' : 'text-white'}`}>
                                                     {c.product.name}
                                                 </p>
+
                                                 {/* Hora del último mensaje simulada/traída de tu BD */}
                                                 <span className="text-[11px] text-white/40 flex-shrink-0">
-                                                    {c.updated_at ? new Date(c.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
+                                                    {c.updated_at ? new Date(c.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                                                 </span>
                                             </div>
-                                            
+
                                             <div className="flex items-center justify-between gap-1 mt-0.5">
                                                 <p className="truncate text-sm text-white/50 group-hover:text-white/70">
                                                     {c.last_message || 'Sin mensajes aún'}
                                                 </p>
+
                                                 {/* Badge opcional de mensajes no leídos */}
                                                 {c.unread_count > 0 && (
                                                     <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#00C896] px-1 text-[10px] font-bold text-black">
@@ -135,8 +146,10 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                                 src={product.product_images?.[0]?.url}
                                 className="h-10 w-10 rounded-full object-cover border border-white/10"
                             />
+
                             <div>
                                 <p className="font-bold text-sm leading-tight">{product.name}</p>
+
                                 <p className="text-xs text-white/40 mt-0.5">
                                     vendedor: {product.user?.name}
                                 </p>
@@ -174,11 +187,16 @@ export default function Show({ auth, product, messages, conversations = [] }) {
 
                                     return (
                                         <div key={msg.id} className="space-y-2">
+
                                             {/* FECHA CENTRADA */}
                                             {isNewDay && (
                                                 <div className="flex justify-center my-4">
                                                     <span className="text-[11px] font-medium text-white/50 bg-white/5 border border-white/5 px-3 py-1 rounded-lg shadow-sm">
-                                                        {date.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'short' })}
+                                                        {date.toLocaleDateString(undefined, {
+                                                            weekday: 'long',
+                                                            day: 'numeric',
+                                                            month: 'short'
+                                                        })}
                                                     </span>
                                                 </div>
                                             )}
@@ -193,8 +211,11 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                                                     <p className="text-[14px] leading-relaxed break-words pr-8">
                                                         {msg.content}
                                                     </p>
+
                                                     {/* HORA ABREVIADA */}
-                                                    <span className={`text-[10px] absolute bottom-1 right-2 opacity-60 ${isMine ? 'text-black/70' : 'text-white/50'}`}>
+                                                    <span className={`text-[10px] absolute bottom-1 right-2 opacity-60 ${
+                                                        isMine ? 'text-black/70' : 'text-white/50'
+                                                    }`}>
                                                         {date.toLocaleTimeString([], {
                                                             hour: '2-digit',
                                                             minute: '2-digit'
@@ -207,6 +228,8 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                                 });
                             })()
                         )}
+
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* INPUT */}
@@ -234,28 +257,62 @@ export default function Show({ auth, product, messages, conversations = [] }) {
                 {/* MODAL PRODUCTO (Sigue igual) */}
                 {selectedProduct && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/90" onClick={() => setSelectedProduct(null)} />
+
+                        <div
+                            className="absolute inset-0 bg-black/90"
+                            onClick={() => setSelectedProduct(null)}
+                        />
+
                         <div className="relative flex h-full max-h-[90vh] w-full max-w-6xl overflow-hidden rounded-[40px] bg-[#0A1625] border border-white/10 flex-col lg:flex-row">
+
                             <div className="relative flex w-full items-center justify-center bg-black lg:w-3/5">
-                                <img src={selectedProduct.product_images?.[currentImgIndex]?.url} className="h-full w-full object-contain" />
+
+                                <img
+                                    src={selectedProduct.product_images?.[currentImgIndex]?.url}
+                                    className="h-full w-full object-contain"
+                                />
+
                                 {selectedProduct.product_images?.length > 1 && (
                                     <>
-                                        <button onClick={(e) => prevImg(e, selectedProduct.product_images)} className="absolute left-5 bg-black/50 p-3 rounded-full">❮</button>
-                                        <button onClick={(e) => nextImg(e, selectedProduct.product_images)} className="absolute right-5 bg-black/50 p-3 rounded-full">❯</button>
+                                        <button
+                                            onClick={(e) => prevImg(e, selectedProduct.product_images)}
+                                            className="absolute left-5 bg-black/50 p-3 rounded-full"
+                                        >
+                                            ❮
+                                        </button>
+
+                                        <button
+                                            onClick={(e) => nextImg(e, selectedProduct.product_images)}
+                                            className="absolute right-5 bg-black/50 p-3 rounded-full"
+                                        >
+                                            ❯
+                                        </button>
                                     </>
                                 )}
                             </div>
+
                             <div className="p-10 w-full lg:w-2/5">
-                                <h2 className="text-3xl font-black">{selectedProduct.name}</h2>
-                                <p className="mt-4 text-white/70">{selectedProduct.description}</p>
-                                <p className="mt-6 text-cyan-400 font-bold text-2xl">{selectedProduct.estimated_value}€</p>
+                                <h2 className="text-3xl font-black">
+                                    {selectedProduct.name}
+                                </h2>
+
+                                <p className="mt-4 text-white/70">
+                                    {selectedProduct.description}
+                                </p>
+
+                                <p className="mt-6 text-cyan-400 font-bold text-2xl">
+                                    {selectedProduct.estimated_value}€
+                                </p>
+
                                 <div className="mt-6 flex items-center gap-3">
                                     <div className="h-10 w-10 rounded-full bg-[#00C896] flex items-center justify-center text-black font-bold">
                                         {selectedProduct.user?.name?.charAt(0)}
                                     </div>
+
                                     <span>{selectedProduct.user?.name}</span>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 )}
