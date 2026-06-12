@@ -25,8 +25,13 @@ class ProductController extends Controller
             ->latest()
             ->get()
             ->map(function ($product) {
-                // Sincronizamos el nombre que espera la Card de React
-                $product->product_images = $product->productImages;
+                $filteredImages = $product->productImages
+                    ->filter(fn ($img) => ($img->status ?? 'active') !== 'inactive')
+                    ->values();
+
+                $product->setRelation('productImages', $filteredImages);
+                $product->product_images = $filteredImages;
+                $product->images = $filteredImages;
                 return $product;
             });
 

@@ -87,16 +87,8 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                   estimated_value: 35,
                   status: "Disponible",
                   user: { name: "Usuario", address: { city: "Madrid" } },
-                  product_images: [
-                      {
-                          url: "https://images.unsplash.com/photo-1511994298241-608e28f14fde",
-                      },
-                  ],
-                  images: [
-                      {
-                          url: "https://images.unsplash.com/photo-1511994298241-608e28f14fde",
-                      },
-                  ],
+                  product_images: [],
+                  images: [],
               };
 
     return (
@@ -296,15 +288,17 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
 
                     <div className="relative flex items-center justify-center p-6">
                         <div className="relative w-full max-w-[300px] sm:max-w-[340px] xl:max-w-[420px] rounded-[28px] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-2xl transition-all hover:border-[#00C896]/30">
-                            <img
-                                src={
-                                    heroProduct.product_images?.[0]?.url ||
-                                    heroProduct.images?.[0]?.url ||
-                                    "https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                }
-                                alt={heroProduct.name}
-                                className="h-[220px] sm:h-[300px] w-full rounded-[20px] object-cover shadow-inner"
-                            />
+                            {heroProduct.product_images?.[0]?.url || heroProduct.images?.[0]?.url ? (
+                                <img
+                                    src={heroProduct.product_images?.[0]?.url || heroProduct.images?.[0]?.url}
+                                    alt={heroProduct.name}
+                                    className="h-[220px] sm:h-[300px] w-full rounded-[20px] object-cover shadow-inner"
+                                />
+                            ) : (
+                                <div className="flex h-[220px] sm:h-[300px] w-full items-center justify-center rounded-[20px] bg-slate-900/80 text-sm text-slate-300 shadow-inner">
+                                    No hay imágenes
+                                </div>
+                            )}
                             <div className="mt-4 px-2">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-lg sm:text-2xl font-bold">
@@ -397,16 +391,17 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                     className="group overflow-hidden rounded-[35px] border border-white/10 bg-white/10 shadow-2xl backdrop-blur-xl transition duration-500 hover:-translate-y-3 hover:border-[#00C896]/40"
                                 >
                                     <div className="relative overflow-hidden">
-                                        <img
-                                            src={
-                                                product.product_images?.[0]
-                                                    ?.url ||
-                                                product.images?.[0]?.url ||
-                                                "https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                            }
-                                            alt={product.name}
-                                            className="h-[280px] w-full object-cover transition duration-700 group-hover:scale-110"
-                                        />
+                                        {product.product_images?.[0]?.url || product.images?.[0]?.url ? (
+                                            <img
+                                                src={product.product_images?.[0]?.url || product.images?.[0]?.url}
+                                                alt={product.name}
+                                                className="h-[280px] w-full object-cover transition duration-700 group-hover:scale-110"
+                                            />
+                                        ) : (
+                                            <div className="flex h-[280px] w-full items-center justify-center bg-slate-900/80 text-sm text-slate-300">
+                                                No hay imágenes
+                                            </div>
+                                        )}
                                         <div className="absolute right-4 top-4">
                                             <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs font-bold text-cyan-400 backdrop-blur-md">
                                                 {product.estimated_value}€ Est.
@@ -549,20 +544,20 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                 (selectedProduct.images &&
                                     selectedProduct.images.length > 0) ? (
                                     <>
-                                        <img
-                                            src={
-                                                selectedProduct
-                                                    .product_images?.[
-                                                    currentImgIndex
-                                                ]?.url ||
-                                                selectedProduct.images?.[
-                                                    currentImgIndex
-                                                ]?.url ||
-                                                "https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                            }
-                                            className="h-full w-full object-contain transition-all duration-500"
-                                            alt={selectedProduct.name}
-                                        />
+                                        {selectedProduct.product_images?.[0]?.url || selectedProduct.images?.[0]?.url ? (
+                                            <img
+                                                src={
+                                                    selectedProduct.product_images?.[currentImgIndex]?.url ||
+                                                    selectedProduct.images?.[currentImgIndex]?.url
+                                                }
+                                                className="h-full w-full object-contain transition-all duration-500"
+                                                alt={selectedProduct.name}
+                                            />
+                                        ) : (
+                                            <div className="flex h-full w-full items-center justify-center bg-black text-sm text-slate-300">
+                                                No hay imágenes
+                                            </div>
+                                        )}
                                         {(selectedProduct.product_images
                                             ?.length > 1 ||
                                             selectedProduct.images?.length >
@@ -594,11 +589,9 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                         )}
                                     </>
                                 ) : (
-                                    <img
-                                        src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                        className="h-full w-full object-contain"
-                                        alt="Placeholder"
-                                    />
+                                    <div className="flex h-full w-full items-center justify-center bg-black text-sm text-slate-300">
+                                        No hay imágenes
+                                    </div>
                                 )}
                             </div>
 

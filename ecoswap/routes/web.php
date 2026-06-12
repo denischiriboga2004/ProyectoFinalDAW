@@ -45,15 +45,21 @@
         }
 
         $products = $query->get()->map(function ($product) use ($unreadNotificationsByProduct) {
-            $product->product_images = $product->productImages->map(function ($img) {
-                // CORREGIDO: Usa el campo url cuando existe y solo transforma rutas locales.
-                $path = $img->url ?? $img->image_path;
-                $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage'))
-                    ? $path
-                    : Storage::url($path);
-                return $img;
-            });
-            $product->images = $product->product_images;
+            $filteredImages = $product->productImages
+                ->filter(fn ($img) => ($img->status ?? 'active') !== 'inactive')
+                ->values()
+                ->map(function ($img) {
+                    // CORREGIDO: Usa el campo url cuando existe y solo transforma rutas locales.
+                    $path = $img->url ?? $img->image_path;
+                    $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage'))
+                        ? $path
+                        : Storage::url($path);
+                    return $img;
+                });
+
+            $product->setRelation('productImages', $filteredImages);
+            $product->product_images = $filteredImages;
+            $product->images = $filteredImages;
             $product->unread_messages = $unreadNotificationsByProduct->get($product->id, 0);
             return $product;
         });
@@ -99,7 +105,7 @@
     Route::get('/users/{user}', [ProfileController::class, 'show'])->name('users.show');
 
     // Rutas protegidas para usuarios autenticados (soporta sesión o token Bearer)
-    Route::middleware('auth.session.or.token')->group(function () {
+    Route::middleware(['auth.session.or.token', 'active.user'])->group(function () {
         
         // NUEVA RUTA: Carga únicamente tus productos con sus imágenes públicas
         Route::get('/mis-productos', function () {
@@ -107,14 +113,20 @@
                 ->where('user_id', Auth::id())
                 ->get()
                 ->map(function ($product) {
-                    $product->product_images = $product->productImages->map(function ($img) {
-                        $path = $img->url ?? $img->image_path;
-                        $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage'))
-                            ? $path
-                            : Storage::url($path);
-                        return $img;
-                    });
-                    $product->images = $product->product_images;
+                    $filteredImages = $product->productImages
+                        ->filter(fn ($img) => ($img->status ?? 'active') !== 'inactive')
+                        ->values()
+                        ->map(function ($img) {
+                            $path = $img->url ?? $img->image_path;
+                            $img->url = (str_starts_with($path, 'http') || str_starts_with($path, '/storage'))
+                                ? $path
+                                : Storage::url($path);
+                            return $img;
+                        });
+
+                    $product->setRelation('productImages', $filteredImages);
+                    $product->product_images = $filteredImages;
+                    $product->images = $filteredImages;
                     return $product;
                 });
 

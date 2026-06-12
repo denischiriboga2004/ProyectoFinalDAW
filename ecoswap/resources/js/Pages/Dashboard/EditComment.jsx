@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function EditComment({ auth, comment }) {
+export default function EditComment({ comment }) {
     const form = useForm({
         content: comment.content,
         rating: comment.rating ?? '',
@@ -45,7 +45,7 @@ export default function EditComment({ auth, comment }) {
                                 value={form.data.content}
                                 onChange={(e) => form.setData('content', e.target.value)}
                                 rows={5}
-                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
                             />
                         </label>
 
@@ -58,7 +58,7 @@ export default function EditComment({ auth, comment }) {
                                     max="5"
                                     value={form.data.rating}
                                     onChange={(e) => form.setData('rating', e.target.value)}
-                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
                                 />
                             </label>
 
@@ -67,7 +67,7 @@ export default function EditComment({ auth, comment }) {
                                 <select
                                     value={form.data.status}
                                     onChange={(e) => form.setData('status', e.target.value)}
-                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
                                 >
                                     <option value="active">Activo</option>
                                     <option value="inactive">Inactivo</option>

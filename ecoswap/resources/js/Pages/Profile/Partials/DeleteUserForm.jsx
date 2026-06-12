@@ -46,13 +46,13 @@ export default function DeleteUserForm({ className = '' }) {
     };
 
     return (
-        <section className={`rounded-[28px] border border-white/10 bg-[#0B1724]/90 p-8 text-white shadow-xl ${className}`}>
+        <section className={`rounded-[28px] border border-white/10 bg-[#0A1625] p-8 text-white shadow-sm ${className}`}>
             <header>
                 <h2 className="text-lg font-semibold text-white">
                     Eliminar cuenta
                 </h2>
 
-                <p className="mt-1 text-sm text-white/70">
+                <p className="mt-1 text-sm text-slate-300">
                     Al eliminar tu cuenta, todos tus datos se borrarán permanentemente. Descarga lo que necesites antes de continuar.
                 </p>
             </header>
@@ -67,7 +67,7 @@ export default function DeleteUserForm({ className = '' }) {
                         ¿Estás seguro de eliminar tu cuenta?
                     </h2>
 
-                    <p className="mt-1 text-sm text-white/70">
+                    <p className="mt-1 text-sm text-slate-300">
                         Una vez eliminada, no podrás recuperar tus datos. Introduce tu contraseña para confirmar.
                     </p>
 

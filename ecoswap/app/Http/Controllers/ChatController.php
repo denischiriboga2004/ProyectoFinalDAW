@@ -71,10 +71,16 @@ class ChatController extends Controller
             'comments.user',
         ]);
 
-        $product->product_images = $product->productImages->map(function ($img) {
-            $img->url = $img->url ?? (isset($img->image_path) ? Storage::url($img->image_path) : null);
-            return $img;
-        });
+        $filteredImages = $product->productImages
+            ->filter(fn ($img) => ($img->status ?? 'active') !== 'inactive')
+            ->values()
+            ->map(function ($img) {
+                $img->url = $img->url ?? (isset($img->image_path) ? Storage::url($img->image_path) : null);
+                return $img;
+            });
+
+        $product->setRelation('productImages', $filteredImages);
+        $product->product_images = $filteredImages;
         $product->images = $product->product_images;
 
         // Obtener todos los mensajes del producto donde el usuario autenticado

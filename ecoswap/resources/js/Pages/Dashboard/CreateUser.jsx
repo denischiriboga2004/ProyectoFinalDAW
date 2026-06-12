@@ -27,7 +27,7 @@ export default function CreateUser({ roles }) {
                                 type="text"
                                 value={form.data.name}
                                 onChange={(e) => form.setData('name', e.target.value)}
-                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900"
                             />
                         </label>
                         <label className="block">
@@ -36,7 +36,7 @@ export default function CreateUser({ roles }) {
                                 type="email"
                                 value={form.data.email}
                                 onChange={(e) => form.setData('email', e.target.value)}
-                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900"
                             />
                         </label>
                         <label className="block">
@@ -45,7 +45,7 @@ export default function CreateUser({ roles }) {
                                 type="password"
                                 value={form.data.password}
                                 onChange={(e) => form.setData('password', e.target.value)}
-                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900"
                             />
                         </label>
                         <label className="block">
@@ -53,7 +53,7 @@ export default function CreateUser({ roles }) {
                             <select
                                 value={form.data.role_id}
                                 onChange={(e) => form.setData('role_id', e.target.value)}
-                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900"
                             >
                                 {roles.map((role) => (
                                     <option key={role.id} value={role.id}>{role.name}</option>
@@ -67,7 +67,7 @@ export default function CreateUser({ roles }) {
                         <select
                             value={form.data.status}
                             onChange={(e) => form.setData('status', e.target.value)}
-                            className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
+                            className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900"
                         >
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>

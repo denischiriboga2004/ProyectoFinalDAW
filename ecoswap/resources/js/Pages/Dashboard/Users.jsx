@@ -42,7 +42,7 @@ export default function Users({ users, roles }) {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Buscar usuarios..."
-                            className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                            className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-slate-400 focus:outline-none"
                         />
                     </div>
                     <div className="flex flex-wrap gap-2 text-sm text-slate-600">

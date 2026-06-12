@@ -129,14 +129,17 @@ export default function Show({ profileUser, products, comments, auth }) {
                                     className="group overflow-hidden rounded-[35px] border border-white/10 bg-white/10 shadow-2xl backdrop-blur-xl transition duration-500 hover:-translate-y-3 hover:border-[#00C896]/40"
                                 >
                                     <div className="relative overflow-hidden">
-                                        <img
-                                            src={
-                                                product.product_images?.[0]?.url ||
-                                                'https://images.unsplash.com/photo-1512496015851-a90fb38ba796'
-                                            }
-                                            alt={product.name}
-                                            className="h-[280px] w-full object-cover transition duration-700 group-hover:scale-110"
-                                        />
+                                        {product.product_images?.[0]?.url ? (
+                                            <img
+                                                src={product.product_images[0].url}
+                                                alt={product.name}
+                                                className="h-[280px] w-full object-cover transition duration-700 group-hover:scale-110"
+                                            />
+                                        ) : (
+                                            <div className="flex h-[280px] w-full items-center justify-center bg-slate-900/80 text-sm text-slate-300">
+                                                No hay imágenes
+                                            </div>
+                                        )}
                                         <div className="absolute right-4 top-4">
                                             <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs font-bold text-cyan-400 backdrop-blur-md">
                                                 {product.estimated_value}€ Est.
@@ -305,7 +308,7 @@ export default function Show({ profileUser, products, comments, auth }) {
                             {(selectedProduct.product_images && selectedProduct.product_images.length > 0) ? (
                                 <>
                                     <img
-                                        src={selectedProduct.product_images?.[currentImgIndex]?.url || 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796'}
+                                        src={selectedProduct.product_images?.[currentImgIndex]?.url}
                                         className="h-full w-full object-contain transition-all duration-500"
                                         alt={selectedProduct.name}
                                     />
@@ -327,11 +330,9 @@ export default function Show({ profileUser, products, comments, auth }) {
                                     )}
                                 </>
                             ) : (
-                                <img
-                                    src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                    className="h-full w-full object-contain"
-                                    alt="Placeholder"
-                                />
+                                <div className="flex h-full w-full items-center justify-center bg-black text-sm text-slate-300">
+                                    No hay imágenes
+                                </div>
                             )}
                         </div>
 

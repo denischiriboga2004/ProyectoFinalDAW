@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +12,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->clearPersistentSessions();
+
         $this->call([
             RoleSeeder::class,
             ProductTypeSeeder::class,
@@ -19,5 +22,20 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             CommentSeeder::class,
         ]);
+
+        $this->clearPersistentSessions();
+    }
+
+    protected function clearPersistentSessions(): void
+    {
+        $sessionPath = storage_path('framework/sessions');
+
+        if (! File::exists($sessionPath)) {
+            return;
+        }
+
+        foreach (File::files($sessionPath) as $file) {
+            File::delete($file);
+        }
     }
 }

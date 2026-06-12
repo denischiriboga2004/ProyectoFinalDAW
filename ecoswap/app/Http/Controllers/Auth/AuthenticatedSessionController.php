@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,25 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('dashboard');
+        $user = Auth::user();
+
+        $defaultRoute = $user->role_id === 1
+            ? route('dashboard', absolute: false)
+            : route('welcome', absolute: false);
+
+        $intended = session('url.intended');
+
+        if (is_string($intended) && preg_match('#^/chat/(\d+)$#', $intended, $matches) === 1) {
+            $product = Product::find((int) $matches[1]);
+
+            if ($product && (int) $product->user_id === (int) $user->id) {
+                session()->forget('url.intended');
+
+                return redirect()->route('welcome');
+            }
+        }
+
+        return redirect()->intended($defaultRoute);
     }
 
     /**

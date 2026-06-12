@@ -22,7 +22,7 @@ export default function CreateProductType() {
                             type="text"
                             value={form.data.name}
                             onChange={(e) => form.setData('name', e.target.value)}
-                            className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
+                            className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900"
                         />
                     </label>
 

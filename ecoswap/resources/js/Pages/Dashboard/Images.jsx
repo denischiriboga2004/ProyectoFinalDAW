@@ -32,7 +32,7 @@ export default function Images({ images }) {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Buscar imágenes..."
-                        className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                        className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-slate-400 focus:outline-none"
                     />
                 </div>
 
@@ -82,9 +82,9 @@ export default function Images({ images }) {
                                                 href={route('admin.images.toggleStatus', image.id)}
                                                 method="put"
                                                 as="button"
-                                                className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700 transition hover:bg-slate-50"
+                                                className="inline-flex rounded-full border border-slate-900 bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-slate-800"
                                             >
-                                                {image.is_main ? 'Desactivar' : 'Activar'}
+                                                {image.status === 'active' ? 'Desactivar' : 'Activar'}
                                             </Link>
                                         </td>
                                     </tr>

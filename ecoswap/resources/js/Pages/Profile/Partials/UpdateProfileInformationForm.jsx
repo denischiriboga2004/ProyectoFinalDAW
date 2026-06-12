@@ -27,13 +27,13 @@ export default function UpdateProfileInformation({
     };
 
     return (
-        <section className={`rounded-[28px] border border-white/10 bg-[#0B1724]/90 p-8 text-white shadow-xl ${className}`}>
+        <section className={`rounded-[28px] border border-white/10 bg-[#0A1625] p-8 text-whiteshadow-sm ${className}`}>
             <header>
                 <h2 className="text-lg font-semibold text-white">
                     Información del perfil
                 </h2>
 
-                <p className="mt-1 text-sm text-white/70">
+                <p className="mt-1 text-sm text-slate-300">
                     Actualiza los datos de tu cuenta y correo.
                 </p>
             </header>
@@ -73,20 +73,20 @@ export default function UpdateProfileInformation({
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
-                        <p className="mt-2 text-sm text-white/70">
+                        <p className="mt-2 text-sm text-slate-600">
                             Tu correo aún no está verificado.
                             <Link
                                 href={route('verification.send')}
                                 method="post"
                                 as="button"
-                                className="rounded-md text-sm text-cyan-200 underline hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
+                                className="rounded-md text-sm text-cyan-700 underline hover:text-cyan-900 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
                             >
                                 Haz clic aquí para reenviar el correo de verificación.
                             </Link>
                         </p>
 
                         {status === 'verification-link-sent' && (
-                            <div className="mt-2 text-sm font-medium text-emerald-400">
+                            <div className="mt-2 text-sm font-medium text-emerald-600">
                                 Se ha enviado un nuevo enlace de verificación a tu correo.
                             </div>
                         )}
@@ -103,7 +103,7 @@ export default function UpdateProfileInformation({
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-white/70">
+                        <p className="text-sm text-slate-300">
                             Guardado.
                         </p>
                     </Transition>

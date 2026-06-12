@@ -141,16 +141,17 @@ export default function Show({
                                     >
                                         {/* ICONO / IMAGEN DEL PRODUCTO  */}
                                         <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5">
-                                            <img
-                                                src={
-                                                    c.product
-                                                        .product_images?.[0]
-                                                        ?.url ||
-                                                    "https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                                }
-                                                className="h-full w-full object-cover"
-                                                alt={c.product.name}
-                                            />
+                                            {c.product.product_images?.[0]?.url ? (
+                                                <img
+                                                    src={c.product.product_images[0].url}
+                                                    className="h-full w-full object-cover"
+                                                    alt={c.product.name}
+                                                />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center bg-slate-900/80 text-[10px] text-slate-300">
+                                                    No hay imágenes
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* CONTENIDO DEL CHAT (Nombre, Último mensaje e Info de hora) */}
@@ -198,14 +199,17 @@ export default function Show({
                     <div className="flex items-center justify-between border-b border-white/10 bg-[#0f223b]/40 p-4 backdrop-blur-md">
                         {product ? (
                             <div className="flex items-center gap-3">
-                                <img
-                                    src={
-                                        product.product_images?.[0]?.url ||
-                                        "https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                    }
-                                    className="h-10 w-10 rounded-full object-cover border border-white/10"
-                                    alt={product.name}
-                                />
+                                {product.product_images?.[0]?.url ? (
+                                    <img
+                                        src={product.product_images[0].url}
+                                        className="h-10 w-10 rounded-full object-cover border border-white/10"
+                                        alt={product.name}
+                                    />
+                                ) : (
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-900/80 text-[10px] text-slate-300">
+                                        No hay imágenes
+                                    </div>
+                                )}
                                 <div>
                                     <p className="font-bold text-sm leading-tight">
                                         {product.name}
@@ -371,16 +375,17 @@ export default function Show({
                         />
                         <div className="relative flex h-full max-h-[90vh] w-full max-w-6xl overflow-hidden rounded-[40px] border border-white/10 bg-[#0A1625] shadow-2xl flex-col lg:flex-row">
                             <div className="group relative flex w-full items-center justify-center overflow-hidden bg-black lg:w-3/5">
-                                <img
-                                    src={
-                                        selectedProduct.product_images?.[
-                                            currentImgIndex
-                                        ]?.url ||
-                                        "https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
-                                    }
-                                    className="h-full w-full object-contain transition-all duration-500"
-                                    alt={selectedProduct.name}
-                                />
+                                {selectedProduct.product_images?.[currentImgIndex]?.url ? (
+                                    <img
+                                        src={selectedProduct.product_images[currentImgIndex].url}
+                                        className="h-full w-full object-contain transition-all duration-500"
+                                        alt={selectedProduct.name}
+                                    />
+                                ) : (
+                                    <div className="flex h-full w-full items-center justify-center bg-black text-sm text-slate-300">
+                                        No hay imágenes
+                                    </div>
+                                )}
                                 {selectedProduct.product_images?.length > 1 && (
                                     <>
                                         <button

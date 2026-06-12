@@ -45,13 +45,13 @@ export default function UpdatePasswordForm({ className = '' }) {
     };
 
     return (
-        <section className={`rounded-[28px] border border-white/10 bg-[#0B1724]/90 p-8 text-white shadow-xl ${className}`}>
+        <section className={`rounded-[28px] border border-white/10 bg-[#0A1625] p-8 text-whiteshadow-sm ${className}`}>
             <header>
                 <h2 className="text-lg font-semibold text-white">
                     Cambiar contraseña
                 </h2>
 
-                <p className="mt-1 text-sm text-white/70">
+                <p className="mt-1 text-sm text-slate-300">
                     Usa una contraseña segura y única para proteger tu cuenta.
                 </p>
             </header>
@@ -130,7 +130,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-white/70">
+                        <p className="text-sm text-slate-300">
                             Guardado.
                         </p>
                     </Transition>

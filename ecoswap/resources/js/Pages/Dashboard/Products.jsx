@@ -35,7 +35,7 @@ export default function Products({ products }) {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Buscar productos..."
-                        className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none sm:w-1/2"
+                        className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-slate-400 focus:outline-none sm:w-1/2"
                     />
                 </div>
 
@@ -66,13 +66,7 @@ export default function Products({ products }) {
                                             </span>
                                         </td>
                                         <td className="px-4 py-4 text-slate-600">{product.estimated_value ? `${product.estimated_value} €` : '—'}</td>
-                                        <td className="px-4 py-4 text-right space-x-2">
-                                            <Link
-                                                href={route('dashboard.products.edit', product.id)}
-                                                className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-700 transition hover:bg-slate-50"
-                                            >
-                                                Editar
-                                            </Link>
+                                        <td className="px-4 py-4 text-right">
                                             <button
                                                 type="button"
                                                 onClick={() => toggleStatus(product)}

@@ -37,7 +37,13 @@ class ProfileController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($product) {
-                $product->product_images = $product->productImages;
+                $filteredImages = $product->productImages
+                    ->filter(fn ($img) => ($img->status ?? 'active') !== 'inactive')
+                    ->values();
+
+                $product->setRelation('productImages', $filteredImages);
+                $product->product_images = $filteredImages;
+                $product->images = $filteredImages;
                 return $product;
             });
 

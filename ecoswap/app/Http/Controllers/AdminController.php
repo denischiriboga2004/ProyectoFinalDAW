@@ -93,7 +93,16 @@ class AdminController extends Controller
         $this->ensureAdmin();
 
         return Inertia::render('Dashboard/Images', [
-            'images' => ProductImage::with('product')->orderBy('created_at', 'desc')->get(),
+            'images' => ProductImage::query()
+                ->with('product.user')
+                ->whereHas('product', function ($query) {
+                    $query->where('status', 'active')
+                        ->whereHas('user', function ($userQuery) {
+                            $userQuery->where('status', 'active');
+                        });
+                })
+                ->orderBy('created_at', 'desc')
+                ->get(),
             'products' => Product::orderBy('name')->get(),
         ]);
     }
@@ -178,6 +187,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'status' => 'required|in:active,inactive',
+            'role_id' => 'nullable|exists:roles,id',
         ]);
 
         $user->update($validated);
@@ -305,8 +315,7 @@ class AdminController extends Controller
     {
         $this->ensureAdmin();
 
-        // Toggle the `is_main` boolean so admins can mark/unmark main images.
-        $image->is_main = $image->is_main ? 0 : 1;
+        $image->status = $image->status === 'active' ? 'inactive' : 'active';
         $image->save();
 
         return back();

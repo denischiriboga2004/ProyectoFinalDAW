@@ -1,12 +1,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function EditUser({ auth, user }) {
+export default function EditUser({ user, roles }) {
     const form = useForm({
         name: user.name,
         email: user.email,
         status: user.status || 'active',
-        role_id: user.role_id || null,
+        role_id: String(user.role_id ?? ''),
     });
 
     const submit = (event) => {
@@ -36,7 +36,7 @@ export default function EditUser({ auth, user }) {
                                     type="text"
                                     value={form.data.name}
                                     onChange={(e) => form.setData('name', e.target.value)}
-                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
                                 />
                             </label>
 
@@ -46,7 +46,7 @@ export default function EditUser({ auth, user }) {
                                     type="email"
                                     value={form.data.email}
                                     onChange={(e) => form.setData('email', e.target.value)}
-                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                                    className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
                                 />
                             </label>
                         </div>
@@ -56,7 +56,7 @@ export default function EditUser({ auth, user }) {
                             <select
                                 value={form.data.status}
                                 onChange={(e) => form.setData('status', e.target.value)}
-                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
                             >
                                 <option value="active">Activo</option>
                                 <option value="inactive">Inactivo</option>
@@ -68,7 +68,7 @@ export default function EditUser({ auth, user }) {
                             <select
                                 value={form.data.role_id}
                                 onChange={(e) => form.setData('role_id', e.target.value)}
-                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
+                                className="mt-2 w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
                             >
                                 <option value="">Sin rol</option>
                                 {/** roles prop injected by controller */}
@@ -80,7 +80,7 @@ export default function EditUser({ auth, user }) {
 
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                             <Link
-                                href={route('dashboard')}
+                                href={route('dashboard.users')}
                                 className="inline-flex rounded-3xl border border-slate-300 px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-slate-700 transition hover:bg-slate-50"
                             >
                                 Volver

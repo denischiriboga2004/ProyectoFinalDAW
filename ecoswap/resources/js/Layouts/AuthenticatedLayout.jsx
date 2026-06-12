@@ -8,7 +8,10 @@ import { useState } from "react";
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const currentRoute = route().current();
-    const isDashboardRoute = currentRoute?.startsWith("dashboard");
+    const isDashboardRoute = Boolean(
+        currentRoute?.startsWith("dashboard") ||
+        currentRoute?.startsWith("admin."),
+    );
 
     // Indicador de notificaciones deshabilitado
     // const unreadCount = user?.unread_notifications_count ?? 0;
@@ -18,32 +21,22 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div
-            className={`${isDashboardRoute ? "min-h-screen bg-slate-50 text-slate-900" : "min-h-screen bg-[#07111F] text-white"}`}
+            className={`${isDashboardRoute ? "min-h-screen bg-slate-50 text-slate-900" : "min-h-screen bg-[#00000] text-white"}`}
         >
             <nav
-                className={`${isDashboardRoute ? "border-b border-slate-200 bg-white/95 text-slate-900" : "border-b border-white/10 bg-[#09141F]/95 text-white"} backdrop-blur-xl`}
+                className={`${isDashboardRoute ? "border-b border-slate-200 bg-white text-slate-900" : "border-b border-white/10 bg-[#07111F]/95 text-white"} backdrop-blur-xl`}
             >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3">
-                                {isDashboardRoute ? (
-                                    <h1 className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00C896] to-cyan-400">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
+                                        ♻
+                                    </div>
+                                    <h1 className="text-3xl font-black tracking-tight">
                                         EcoSwap
                                     </h1>
-                                ) : (
-                                    <Link href="/">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
-                                                ♻
-                                            </div>
-                                            <h1 className="text-3xl font-black tracking-tight">
-                                                EcoSwap
-                                            </h1>
-                                        </div>
-                                    </Link>
-                                )}
-                            </div>
+                                </div>
 
                             <div
                                 className={`hidden space-x-6 sm:flex sm:items-center text-sm font-medium ${isDashboardRoute ? "text-slate-700" : "text-white/80"}`}
@@ -114,12 +107,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:gap-3">
-                            <a
-                                href="/contact"
-                                className={`${isDashboardRoute ? "text-sm font-medium text-slate-700 hover:text-slate-900" : "text-sm font-medium text-white/80 hover:text-white"} transition`}
-                            >
-                                Ayuda
-                            </a>
+
 
                             <div className="relative">
                                 <Dropdown>
