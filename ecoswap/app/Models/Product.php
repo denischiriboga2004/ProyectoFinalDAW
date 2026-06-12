@@ -14,6 +14,8 @@ class Product extends Model
     protected $fillable = [
         'user_id',
         'product_type_id',
+        'province',
+        'swap_for',
         'name',
         'description',
         'estimated_value',

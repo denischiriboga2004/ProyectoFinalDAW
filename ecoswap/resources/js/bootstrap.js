@@ -3,12 +3,16 @@ import axios from "axios";
 window.axios = axios;
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+window.axios.defaults.headers.common["Accept"] = "application/json";
+window.axios.defaults.withCredentials = true;
 
-// Interceptor para añadir token Bearer a todas las request
+// SOLO auth token (esto sí es correcto)
 window.axios.interceptors.request.use((config) => {
     const token = sessionStorage.getItem("auth_token");
+
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
 });

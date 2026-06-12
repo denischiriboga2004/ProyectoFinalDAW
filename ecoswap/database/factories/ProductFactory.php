@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Product;
+use App\Models\Province;
 use App\Models\User;
 use App\Models\ProductType;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,11 +27,12 @@ class ProductFactory extends Factory
 
             // Buscamos un tipo de producto aleatorio
             'product_type_id' => ProductType::inRandomOrder()->first()->id ?? 1,
+            'province' => Province::inRandomOrder()->first()?->name ?? 'Madrid',
             
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),
             'estimated_value' => $this->faker->randomFloat(2, 5, 1000),
-            'status' => 'active',
+            'status' => $this->faker->boolean(80) ? 'active' : 'inactive',
         ];
     }
 }

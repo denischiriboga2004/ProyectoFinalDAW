@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -16,7 +17,8 @@ class User extends Authenticatable
         'password',
         'role_id',
         'email_verified_at',
-        'postal_code' // Único cambio: añadido para permitir el registro
+        'status',
+        'profile_photo_path',
     ];
 
     protected $hidden = [
@@ -70,6 +72,11 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function profileComments()
+    {
+        return $this->hasMany(Comment::class, 'target_user_id');
     }
 
     public function notifications()

@@ -155,6 +155,9 @@ export default function MyProducts({ products = [], auth }) {
                                             <p className="mt-2 line-clamp-2 text-sm text-white/60 px-2 min-h-[40px]">
                                                 {product.description}
                                             </p>
+                                            <p className="mt-3 text-sm text-white/50 px-2">
+                                                {product.province || product.user?.address?.province || product.user?.address?.city || 'Ubicación no disponible'}
+                                            </p>
 
                                             <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center px-2 text-xs">
                                                 <span className="text-white/50">

@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+  textarea,
+  select {
+    @apply rounded-2xl border border-white/10 bg-[#07111F] text-white placeholder:text-white/40 outline-none transition-all focus:border-[#00C896] focus:ring-2 focus:ring-[#00C896]/20;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-white/40;
+  }
+}

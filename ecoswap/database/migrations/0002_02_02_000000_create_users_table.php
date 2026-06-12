@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('postal_code', 10); // Añado el código postal aquí mismo
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 

@@ -1,77 +1,164 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import Dropdown from "@/Components/Dropdown";
+import NavLink from "@/Components/NavLink";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import { Link, usePage } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const currentRoute = route().current();
+    const isDashboardRoute = currentRoute?.startsWith("dashboard");
+
+    // Indicador de notificaciones deshabilitado
+    // const unreadCount = user?.unread_notifications_count ?? 0;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
+        <div
+            className={`${isDashboardRoute ? "min-h-screen bg-slate-50 text-slate-900" : "min-h-screen bg-[#07111F] text-white"}`}
+        >
+            <nav
+                className={`${isDashboardRoute ? "border-b border-slate-200 bg-white/95 text-slate-900" : "border-b border-white/10 bg-[#09141F]/95 text-white"} backdrop-blur-xl`}
+            >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
+                    <div className="flex h-16 items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
+                                {isDashboardRoute ? (
+                                    <h1 className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00C896] to-cyan-400">
+                                        EcoSwap
+                                    </h1>
+                                ) : (
+                                    <Link href="/">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
+                                                ♻
+                                            </div>
+                                            <h1 className="text-3xl font-black tracking-tight">
+                                                EcoSwap
+                                            </h1>
+                                        </div>
+                                    </Link>
+                                )}
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
+                            <div
+                                className={`hidden space-x-6 sm:flex sm:items-center text-sm font-medium ${isDashboardRoute ? "text-slate-700" : "text-white/80"}`}
+                            >
+                                {user.role_id === 1 && (
+                                    <>
+                                        <NavLink
+                                            href={route("dashboard")}
+                                            active={route().current(
+                                                "dashboard",
+                                            )}
+                                        >
+                                            Dashboard
+                                        </NavLink>
+                                        <NavLink
+                                            href={route("dashboard.users")}
+                                            active={route().current(
+                                                "dashboard.users",
+                                            )}
+                                        >
+                                            Usuarios
+                                        </NavLink>
+                                        <NavLink
+                                            href={route("dashboard.products")}
+                                            active={route().current(
+                                                "dashboard.products",
+                                            )}
+                                        >
+                                            Productos
+                                        </NavLink>
+                                        <NavLink
+                                            href={route("dashboard.comments")}
+                                            active={route().current(
+                                                "dashboard.comments",
+                                            )}
+                                        >
+                                            Comentarios
+                                        </NavLink>
+                                        <NavLink
+                                            href={route("dashboard.images")}
+                                            active={route().current(
+                                                "dashboard.images",
+                                            )}
+                                        >
+                                            Imágenes
+                                        </NavLink>
+                                        <NavLink
+                                            href={route("dashboard.roles")}
+                                            active={route().current(
+                                                "dashboard.roles",
+                                            )}
+                                        >
+                                            Roles
+                                        </NavLink>
+                                        <NavLink
+                                            href={route(
+                                                "dashboard.productTypes",
+                                            )}
+                                            active={route().current(
+                                                "dashboard.productTypes",
+                                            )}
+                                        >
+                                            Tipos
+                                        </NavLink>
+                                    </>
+                                )}
                             </div>
                         </div>
 
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
+                        <div className="hidden sm:flex sm:items-center sm:gap-3">
+                            <a
+                                href="/contact"
+                                className={`${isDashboardRoute ? "text-sm font-medium text-slate-700 hover:text-slate-900" : "text-sm font-medium text-white/80 hover:text-white"} transition`}
+                            >
+                                Ayuda
+                            </a>
+
+                            <div className="relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
+                                        <button
+                                            type="button"
+                                            className={`${isDashboardRoute ? "inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 transition hover:border-slate-300 focus:outline-none" : "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#0F1C2B] text-white transition hover:border-white/20 focus:outline-none"}`}
+                                        >
+                                            {user.profile_photo_path ? (
+                                                <img
+                                                    src={`/storage/${user.profile_photo_path}`}
+                                                    alt={user.name}
+                                                    className="h-10 w-10 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#00C896] text-sm font-bold text-black">
+                                                    {user.name
+                                                        ?.charAt(0)
+                                                        .toUpperCase()}
+                                                </span>
+                                            )}
+                                        </button>
                                     </Dropdown.Trigger>
 
-                                    <Dropdown.Content>
+                                    <Dropdown.Content
+                                        className={`${isDashboardRoute ? "bg-white text-slate-900" : "bg-[#0B1724] text-white"}`}
+                                        contentClasses={`${isDashboardRoute ? "bg-white text-slate-900" : "bg-[#0B1724] text-white"}`}
+                                    >
                                         <Dropdown.Link
-                                            href={route('profile.edit')}
+                                            href={route("profile.edit")}
                                         >
-                                            Profile
+                                            Perfil
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                            href={route('logout')}
+                                            href={route("logout")}
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            Cerrar sesión
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -85,7 +172,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         (previousState) => !previousState,
                                     )
                                 }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                className={`${isDashboardRoute ? "inline-flex items-center justify-center rounded-md p-2 text-slate-700 transition duration-150 ease-in-out hover:bg-slate-100 hover:text-slate-900 focus:outline-none" : "inline-flex items-center justify-center rounded-md p-2 text-white/70 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:outline-none"}`}
                             >
                                 <svg
                                     className="h-6 w-6"
@@ -96,8 +183,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <path
                                         className={
                                             !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
+                                                ? "inline-flex"
+                                                : "hidden"
                                         }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
@@ -107,8 +194,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <path
                                         className={
                                             showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
+                                                ? "inline-flex"
+                                                : "hidden"
                                         }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
@@ -123,39 +210,91 @@ export default function AuthenticatedLayout({ header, children }) {
 
                 <div
                     className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
+                        (showingNavigationDropdown ? "block" : "hidden") +
+                        " sm:hidden"
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
+                        {user.role_id === 1 && (
+                            <>
+                                <ResponsiveNavLink
+                                    href={route("dashboard")}
+                                    active={route().current("dashboard")}
+                                >
+                                    Dashboard
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("dashboard.users")}
+                                    active={route().current("dashboard.users")}
+                                >
+                                    Usuarios
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("dashboard.products")}
+                                    active={route().current(
+                                        "dashboard.products",
+                                    )}
+                                >
+                                    Productos
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("dashboard.comments")}
+                                    active={route().current(
+                                        "dashboard.comments",
+                                    )}
+                                >
+                                    Comentarios
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("dashboard.images")}
+                                    active={route().current("dashboard.images")}
+                                >
+                                    Imágenes
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("dashboard.roles")}
+                                    active={route().current("dashboard.roles")}
+                                >
+                                    Roles
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route("dashboard.productTypes")}
+                                    active={route().current(
+                                        "dashboard.productTypes",
+                                    )}
+                                >
+                                    Tipos
+                                </ResponsiveNavLink>
+                            </>
+                        )}
                     </div>
 
-                    <div className="border-t border-gray-200 pb-1 pt-4">
+                    <div
+                        className={`${isDashboardRoute ? "border-t border-slate-200 pb-1 pt-4" : "border-t border-white/10 pb-1 pt-4"}`}
+                    >
                         <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">
+                            <div
+                                className={`${isDashboardRoute ? "text-base font-medium text-slate-800" : "text-base font-medium text-white"}`}
+                            >
                                 {user.name}
                             </div>
-                            <div className="text-sm font-medium text-gray-500">
+                            <div
+                                className={`${isDashboardRoute ? "text-sm font-medium text-slate-600" : "text-sm font-medium text-white/70"}`}
+                            >
                                 {user.email}
                             </div>
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
+                            <ResponsiveNavLink href={route("profile.edit")}>
+                                Perfil
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
-                                href={route('logout')}
+                                href={route("logout")}
                                 as="button"
                             >
-                                Log Out
+                                Cerrar sesión
                             </ResponsiveNavLink>
                         </div>
                     </div>
@@ -163,7 +302,9 @@ export default function AuthenticatedLayout({ header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-white shadow">
+                <header
+                    className={`${isDashboardRoute ? "bg-white shadow-sm" : "bg-[#081220] shadow-[0_10px_30px_rgba(0,0,0,0.12)]"}`}
+                >
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         {header}
                     </div>

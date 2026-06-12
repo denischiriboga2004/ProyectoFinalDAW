@@ -1,17 +1,19 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function Create({ categories = [], auth }) {
+export default function Create({ categories = [], provinces = [], auth }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    
+
     // Estado local para guardar las URLs de vista previa de las imágenes
     const [previews, setPreviews] = useState([]);
-    
+    const [selectedImage, setSelectedImage] = useState(null);
+
     const userName = auth?.user?.name || 'Usuario';
 
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         product_type_id: '',
+        province: '',
         estimated_value: '',
         swap_for: '',
         description: '',
@@ -21,7 +23,7 @@ export default function Create({ categories = [], auth }) {
     // Manejador del cambio de imágenes
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
-        
+
         // CORREGIDO: Acumula las imágenes si el usuario selecciona archivos en varias tandas
         const updatedFiles = [...data.images, ...files];
         setData('images', updatedFiles);
@@ -39,16 +41,18 @@ export default function Create({ categories = [], auth }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Inertia detecta automáticamente los archivos dentro de "data.images" e inicia multipart/form-data
-        post('/products');
+
+        post(route('products.store'), {
+            forceFormData: true,
+        });
     };
 
     return (
         <>
             <Head title="Crear Producto - EcoSwap" />
-            
+
             <div className="min-h-screen bg-[#07111F] text-white">
-                
+
                 {/* BARRA SUPERIOR (NAVBAR) */}
                 <nav className="border-b border-white/10 bg-[#07111F]/80 backdrop-blur-md sticky top-0 z-50">
                     <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -62,7 +66,7 @@ export default function Create({ categories = [], auth }) {
                         </Link>
 
                         <div className="relative">
-                            <button 
+                            <button
                                 onClick={() => setDropdownOpen(!dropdownOpen)}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition font-medium text-sm"
                             >
@@ -91,17 +95,18 @@ export default function Create({ categories = [], auth }) {
                 <div className="p-10">
                     <div className="max-w-2xl mx-auto bg-white/5 p-8 rounded-[40px] border border-white/10 shadow-2xl">
                         <h2 className="text-3xl font-black mb-6">Subir un producto nuevo</h2>
-                        
-                        <form onSubmit={handleSubmit} className="space-y-6">
+
+                        <form onSubmit={handleSubmit} className="space-y-6">                           
                             {/* INPUT: Nombre */}
                             <div>
                                 <label className="block text-xs font-bold uppercase mb-2 text-white/60">Nombre del Objeto</label>
-                                <input 
-                                    type="text" 
-                                    value={data.name} 
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={data.name}
                                     onChange={e => setData('name', e.target.value)}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
-                                    placeholder="Ej. Bicicleta de montaña..." 
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
+                                    placeholder="Ej. Bicicleta de montaña..."
                                 />
                                 {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
                             </div>
@@ -109,8 +114,9 @@ export default function Create({ categories = [], auth }) {
                             {/* SELECT: Categorías */}
                             <div>
                                 <label className="block text-xs font-bold uppercase mb-2 text-white/60">Categoría</label>
-                                <select 
-                                    value={data.product_type_id} 
+                                <select
+                                    name="product_type_id"
+                                    value={data.product_type_id}
                                     onChange={e => setData('product_type_id', e.target.value)}
                                     className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
                                 >
@@ -122,14 +128,31 @@ export default function Create({ categories = [], auth }) {
                                 {errors.product_type_id && <p className="text-red-400 text-xs mt-1">{errors.product_type_id}</p>}
                             </div>
 
+                            <div>
+                                <label className="block text-xs font-bold uppercase mb-2 text-white/60">Provincia</label>
+                                <select
+                                    name="province"
+                                    value={data.province}
+                                    onChange={e => setData('province', e.target.value)}
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
+                                >
+                                    <option value="">Selecciona una provincia</option>
+                                    {provinces.map((province) => (
+                                        <option key={province.id} value={province.name}>{province.name}</option>
+                                    ))}
+                                </select>
+                                {errors.province && <p className="text-red-400 text-xs mt-1">{errors.province}</p>}
+                            </div>
+
                             {/* INPUT: Valor Estimado */}
                             <div>
                                 <label className="block text-xs font-bold uppercase mb-2 text-white/60">Valor Estimado (€)</label>
-                                <input 
-                                    type="number" 
-                                    value={data.estimated_value} 
+                                <input
+                                    type="number"
+                                    name="estimated_value"
+                                    value={data.estimated_value}
                                     onChange={e => setData('estimated_value', e.target.value)}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
                                     placeholder="0"
                                 />
                                 {errors.estimated_value && <p className="text-red-400 text-xs mt-1">{errors.estimated_value}</p>}
@@ -138,12 +161,13 @@ export default function Create({ categories = [], auth }) {
                             {/* INPUT: Cambio por */}
                             <div>
                                 <label className="block text-xs font-bold uppercase mb-2 text-white/60">¿Qué buscas a cambio?</label>
-                                <input 
-                                    type="text" 
-                                    value={data.swap_for} 
+                                <input
+                                    type="text"
+                                    name="swap_for"
+                                    value={data.swap_for}
                                     onChange={e => setData('swap_for', e.target.value)}
-                                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
-                                    placeholder="Ej. Una tablet o componentes de PC..." 
+                                    className="w-full rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white focus:outline-none focus:border-[#00C896] transition"
+                                    placeholder="Ej. Una tablet o componentes de PC..."
                                 />
                                 {errors.swap_for && <p className="text-red-400 text-xs mt-1">{errors.swap_for}</p>}
                             </div>
@@ -151,10 +175,11 @@ export default function Create({ categories = [], auth }) {
                             {/* TEXTAREA: Descripción */}
                             <div>
                                 <label className="block text-xs font-bold uppercase mb-2 text-white/60">Descripción</label>
-                                <textarea 
-                                    value={data.description} 
+                                <textarea
+                                    name="description"
+                                    value={data.description}
                                     onChange={e => setData('description', e.target.value)}
-                                    className="w-full h-32 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-white resize-none focus:outline-none focus:border-[#00C896] transition"
+                                    className="w-full h-32 rounded-2xl border border-white/10 bg-[#07111F] px-5 py-4 text-white resize-none focus:outline-none focus:border-[#00C896] transition"
                                     placeholder="Describe brevemente el estado físico del objeto..."
                                 />
                                 {errors.description && <p className="text-red-400 text-xs mt-1">{errors.description}</p>}
@@ -163,11 +188,12 @@ export default function Create({ categories = [], auth }) {
                             {/* APARTADO: SUBIDA DE IMÁGENES */}
                             <div>
                                 <label className="block text-xs font-bold uppercase mb-2 text-white/60">Imágenes del Producto</label>
-                                
+
                                 <div className="border-2 border-dashed border-white/20 hover:border-[#00C896] rounded-2xl p-6 transition text-center cursor-pointer relative bg-white/5">
-                                    <input 
-                                        type="file" 
-                                        multiple 
+                                    <input
+                                        type="file"
+                                        name="images[]"
+                                        multiple
                                         accept="image/*"
                                         onChange={handleImageChange}
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -184,11 +210,14 @@ export default function Create({ categories = [], auth }) {
                                 {previews.length > 0 && (
                                     <div className="grid grid-cols-4 gap-4 mt-4">
                                         {previews.map((src, index) => (
-                                            <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-white/5 group">
-                                                <img src={src} alt="Preview" className="w-full h-full object-cover" />
-                                                <button 
+                                            <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-white/5 group cursor-pointer" onClick={() => setSelectedImage(src)}>
+                                                <img src={src} alt="Preview" className="w-full h-full object-cover group-hover:scale-110 transition" />
+                                                <button
                                                     type="button"
-                                                    onClick={() => removePreviewImage(index)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        removePreviewImage(index);
+                                                    }}
                                                     className="absolute top-1 right-1 h-5 w-5 rounded-full bg-black/80 text-white font-bold text-[10px] flex items-center justify-center hover:bg-red-600 transition opacity-0 group-hover:opacity-100"
                                                 >
                                                     ✕
@@ -204,8 +233,8 @@ export default function Create({ categories = [], auth }) {
                                 <Link href="/" className="px-6 py-4 rounded-2xl bg-white/10 font-bold hover:bg-white/20 transition">
                                     Cancelar
                                 </Link>
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     disabled={processing}
                                     className="px-6 py-4 rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 font-black text-black disabled:opacity-50 transition transform active:scale-95"
                                 >
@@ -215,6 +244,25 @@ export default function Create({ categories = [], auth }) {
                         </form>
                     </div>
                 </div>
+
+                {/* MODAL PARA VER IMAGEN EN GRANDE */}
+                {selectedImage && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm" onClick={() => setSelectedImage(null)}>
+                        <div className="relative max-w-4xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute -top-10 right-0 text-white text-2xl font-bold hover:text-cyan-400 transition"
+                            >
+                                ✕ Cerrar
+                            </button>
+                            <img
+                                src={selectedImage}
+                                alt="Vista grande"
+                                className="max-w-full max-h-[90vh] rounded-2xl object-contain"
+                            />
+                        </div>
+                    </div>
+                )}
 
             </div>
         </>

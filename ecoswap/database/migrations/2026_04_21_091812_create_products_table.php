@@ -16,6 +16,8 @@ return new class extends Migration
 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_type_id')->constrained();
+            $table->string('province')->nullable();
+            $table->string('swap_for')->nullable();
 
             $table->string('name');
             $table->text('description')->nullable();

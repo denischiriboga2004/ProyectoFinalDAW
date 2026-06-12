@@ -12,7 +12,12 @@ class ProductImage extends Model
     protected $fillable = [
         'product_id',
         'url',
-        'is_main'
+        'is_main',
+        'status',
+    ];
+
+    protected $casts = [
+        'is_main' => 'boolean',
     ];
 
     public function product()
