@@ -1,15 +1,22 @@
 import { Head, Link, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Welcome({ auth, products, provinces, productTypes, filters }) {
+export default function Welcome({
+    auth,
+    products,
+    provinces,
+    productTypes,
+    filters,
+}) {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedZone, setSelectedZone] = useState("Todas");
-    const [selectedCategory, setSelectedCategory] = useState(filters?.product_type_id ?? "Todas");
+    const [selectedCategory, setSelectedCategory] = useState(
+        filters?.product_type_id ?? "Todas",
+    );
     const [visibleCount, setVisibleCount] = useState(10);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
-
 
     const filteredProducts =
         products?.filter((product) => {
@@ -23,7 +30,8 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                 product.user?.address?.province ||
                 product.user?.address?.city ||
                 "Zona desconocida";
-            const productCategory = product.product_type_id || product.product_type || null;
+            const productCategory =
+                product.product_type_id || product.product_type || null;
             const zoneMatch =
                 selectedZone === "Todas" ||
                 productProvince.toLowerCase() === selectedZone.toLowerCase();
@@ -33,7 +41,11 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                 selectedCategory === "Todas" ||
                 String(productCategory) === String(selectedCategory);
 
-            return (!query || nameMatch || descriptionMatch) && zoneMatch && categoryMatch;
+            return (
+                (!query || nameMatch || descriptionMatch) &&
+                zoneMatch &&
+                categoryMatch
+            );
         }) || [];
 
     const visibleProducts = filteredProducts.slice(0, visibleCount);
@@ -95,7 +107,10 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
         <>
             <Head title="EcoSwap" />
 
-            <div id="top" className="min-h-screen overflow-x-hidden bg-[#07111F] text-white relative">
+            <div
+                id="top"
+                className="min-h-screen overflow-x-hidden bg-[#07111F] text-white relative"
+            >
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     <div className="absolute left-[-200px] top-[-200px] h-[500px] w-[500px] rounded-full bg-[#00C896] opacity-20 blur-3xl"></div>
                     <div className="absolute top-20 right-0 h-[600px] w-[600px] translate-x-1/3 rounded-full bg-cyan-400 opacity-20 blur-[120px]"></div>
@@ -136,7 +151,7 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                             >
                                 Explorar
                             </a>
-                           
+
                             <a
                                 href="#how-it-works"
                                 className="text-white/70 transition hover:text-white"
@@ -174,7 +189,11 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                         className="relative"
                                         tabIndex={0}
                                         onBlur={(e) => {
-                                            if (!e.currentTarget.contains(e.relatedTarget)) {
+                                            if (
+                                                !e.currentTarget.contains(
+                                                    e.relatedTarget,
+                                                )
+                                            ) {
                                                 setShowProfileMenu(false);
                                             }
                                         }}
@@ -196,7 +215,9 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                                 />
                                             ) : (
                                                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#00C896] text-sm font-bold text-black">
-                                                    {auth.user.name?.charAt(0).toUpperCase()}
+                                                    {auth.user.name
+                                                        ?.charAt(0)
+                                                        .toUpperCase()}
                                                 </span>
                                             )}
                                         </button>
@@ -204,13 +225,13 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                         {showProfileMenu && (
                                             <div className="absolute right-0 mt-2 w-44 rounded-3xl border border-white/10 bg-[#0B1726] p-2 shadow-2xl backdrop-blur-xl">
                                                 <Link
-                                                    href={route('profile.edit')}
+                                                    href={route("profile.edit")}
                                                     className="block rounded-2xl px-4 py-3 text-sm text-white transition hover:bg-white/10"
                                                 >
                                                     Perfil
                                                 </Link>
                                                 <Link
-                                                    href={route('logout')}
+                                                    href={route("logout")}
                                                     method="post"
                                                     as="button"
                                                     className="block w-full rounded-2xl px-4 py-3 text-left text-sm text-white transition hover:bg-white/10"
@@ -241,7 +262,7 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                     </div>
                 </header>
 
-                <section className="relative grid min-h-screen grid-cols-1 gap-8 md:grid-cols-2 z-10">
+                <section className="relative grid min-h-screen grid-cols-1 gap-8 md:grid-cols-2 z-10 pt-16 md:pt-24">
                     <div className="flex flex-col justify-center px-6 pt-24 md:px-10 lg:px-24">
                         <span className="mb-8 w-fit rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-xl">
                             Plataforma de Economía Circular
@@ -287,15 +308,19 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                     </div>
 
                     <div className="relative flex items-center justify-center p-6">
-                        <div className="relative w-full max-w-[300px] sm:max-w-[340px] xl:max-w-[420px] rounded-[28px] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-2xl transition-all hover:border-[#00C896]/30">
-                            {heroProduct.product_images?.[0]?.url || heroProduct.images?.[0]?.url ? (
+                        <div className="relative w-full max-w-[280px] sm:max-w-[320px] xl:max-w-[380px] rounded-[28px] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-2xl transition-all hover:border-[#00C896]/30">
+                            {heroProduct.product_images?.[0]?.url ||
+                            heroProduct.images?.[0]?.url ? (
                                 <img
-                                    src={heroProduct.product_images?.[0]?.url || heroProduct.images?.[0]?.url}
+                                    src={
+                                        heroProduct.product_images?.[0]?.url ||
+                                        heroProduct.images?.[0]?.url
+                                    }
                                     alt={heroProduct.name}
-                                    className="h-[220px] sm:h-[300px] w-full rounded-[20px] object-cover shadow-inner"
+                                    className="h-[200px] sm:h-[260px] w-full rounded-[20px] object-cover shadow-inner"
                                 />
                             ) : (
-                                <div className="flex h-[220px] sm:h-[300px] w-full items-center justify-center rounded-[20px] bg-slate-900/80 text-sm text-slate-300 shadow-inner">
+                                <div className="flex h-[200px] sm:h-[260px] w-full items-center justify-center rounded-[20px] bg-slate-900/80 text-sm text-slate-300 shadow-inner">
                                     No hay imágenes
                                 </div>
                             )}
@@ -318,7 +343,8 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                 )}
                                 <div className="mt-4 flex items-center justify-between">
                                     <span className="text-sm font-semibold text-cyan-400">
-                                        {heroProduct.user?.address?.city || heroProduct.user?.name}
+                                        {heroProduct.user?.address?.city ||
+                                            heroProduct.user?.name}
                                     </span>
                                     <button
                                         onClick={() => {
@@ -335,7 +361,10 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                     </div>
                 </section>
 
-                <section id="products-section" className="relative px-6 pt-32 pb-32 lg:px-20 z-10">
+                <section
+                    id="products-section"
+                    className="relative px-6 pt-32 pb-32 lg:px-20 z-10"
+                >
                     <div className="mb-16">
                         <h2 className="text-5xl font-black">
                             Descubre productos cerca de ti
@@ -360,24 +389,34 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                             <div className="flex w-full items-center gap-3">
                                 <select
                                     value={selectedZone}
-                                    onChange={(e) => setSelectedZone(e.target.value)}
+                                    onChange={(e) =>
+                                        setSelectedZone(e.target.value)
+                                    }
                                     className="w-1/2 rounded-3xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
                                 >
                                     <option value="Todas">Todas</option>
-                                    {provinces && provinces.map((p) => (
-                                        <option key={p.id} value={p.name}>{p.name}</option>
-                                    ))}
+                                    {provinces &&
+                                        provinces.map((p) => (
+                                            <option key={p.id} value={p.name}>
+                                                {p.name}
+                                            </option>
+                                        ))}
                                 </select>
 
                                 <select
                                     value={selectedCategory}
-                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    onChange={(e) =>
+                                        setSelectedCategory(e.target.value)
+                                    }
                                     className="w-1/2 rounded-3xl border border-white/10 bg-[#07111F] px-5 py-4 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30"
                                 >
                                     <option value="Todas">Todas</option>
-                                    {productTypes && productTypes.map((t) => (
-                                        <option key={t.id} value={t.id}>{t.name}</option>
-                                    ))}
+                                    {productTypes &&
+                                        productTypes.map((t) => (
+                                            <option key={t.id} value={t.id}>
+                                                {t.name}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
                         </div>
@@ -391,9 +430,14 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                     className="group overflow-hidden rounded-[35px] border border-white/10 bg-white/10 shadow-2xl backdrop-blur-xl transition duration-500 hover:-translate-y-3 hover:border-[#00C896]/40"
                                 >
                                     <div className="relative overflow-hidden">
-                                        {product.product_images?.[0]?.url || product.images?.[0]?.url ? (
+                                        {product.product_images?.[0]?.url ||
+                                        product.images?.[0]?.url ? (
                                             <img
-                                                src={product.product_images?.[0]?.url || product.images?.[0]?.url}
+                                                src={
+                                                    product.product_images?.[0]
+                                                        ?.url ||
+                                                    product.images?.[0]?.url
+                                                }
                                                 alt={product.name}
                                                 className="h-[280px] w-full object-cover transition duration-700 group-hover:scale-110"
                                             />
@@ -431,28 +475,39 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                             )}
                                             <span>•</span>
                                             <span>
-                                                {product.province || product.user?.address?.province || product.user?.address?.city || 'Ubicación no disponible'}
+                                                {product.province ||
+                                                    product.user?.address
+                                                        ?.province ||
+                                                    product.user?.address
+                                                        ?.city ||
+                                                    "Ubicación no disponible"}
                                             </span>
                                         </div>
                                         {product.swap_for && (
                                             <p className="mt-3 text-sm font-medium text-[#00C896]">
-                                                Busca a cambio: {product.swap_for}
+                                                Busca a cambio:{" "}
+                                                {product.swap_for}
                                             </p>
                                         )}
                                         <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-5">
                                             <div className="flex items-center gap-2">
-                                            <Link
-                                                href={route('users.show', product.user?.id)}
-                                                className="text-xs font-medium text-white/70 transition hover:text-[#00C896]"
-                                            >
-                                                <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-[#00C896] to-cyan-400 text-[10px] font-bold text-black">
-                                                    {product.user?.name.charAt(
-                                                        0,
+                                                <Link
+                                                    href={route(
+                                                        "users.show",
+                                                        product.user?.id,
                                                     )}
-                                                </div>
-                                                <span className="ml-2">{product.user?.name}</span>
-                                            </Link>
-                                        </div>
+                                                    className="text-xs font-medium text-white/70 transition hover:text-[#00C896]"
+                                                >
+                                                    <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-[#00C896] to-cyan-400 text-[10px] font-bold text-black">
+                                                        {product.user?.name.charAt(
+                                                            0,
+                                                        )}
+                                                    </div>
+                                                    <span className="ml-2">
+                                                        {product.user?.name}
+                                                    </span>
+                                                </Link>
+                                            </div>
                                             <button
                                                 onClick={() => {
                                                     setSelectedProduct(product);
@@ -475,7 +530,9 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                     {hasMoreProducts && (
                         <div className="mt-10 flex justify-center">
                             <button
-                                onClick={() => setVisibleCount((count) => count + 10)}
+                                onClick={() =>
+                                    setVisibleCount((count) => count + 10)
+                                }
                                 className="rounded-2xl bg-[#00C896] px-8 py-4 text-base font-bold text-black transition hover:bg-cyan-300"
                             >
                                 Cargar más
@@ -484,7 +541,10 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                     )}
                 </section>
 
-                <section id="how-it-works" className="relative px-6 pt-32 pb-24 lg:px-20 z-10">
+                <section
+                    id="how-it-works"
+                    className="relative px-6 pt-32 pb-24 lg:px-20 z-10"
+                >
                     <div className="mb-16 text-center">
                         <h2 className="text-5xl font-black">¿Cómo funciona?</h2>
                         <p className="mt-5 text-xl text-white/60">
@@ -494,9 +554,24 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
 
                     <div className="grid gap-10 md:grid-cols-3">
                         <div className="rounded-[35px] border border-white/10 bg-white/10 p-10 backdrop-blur-xl transition hover:-translate-y-2">
-                            <svg className="h-16 w-16 text-[#00C896]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <svg
+                                className="h-16 w-16 text-[#00C896]"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
                             </svg>
                             <h3 className="mt-8 text-3xl font-bold">Publica</h3>
                             <p className="mt-5 text-white/60">
@@ -505,8 +580,18 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                             </p>
                         </div>
                         <div className="rounded-[35px] border border-white/10 bg-white/10 p-10 backdrop-blur-xl transition hover:-translate-y-2">
-                            <svg className="h-16 w-16 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            <svg
+                                className="h-16 w-16 text-cyan-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                />
                             </svg>
                             <h3 className="mt-8 text-3xl font-bold">
                                 Encuentra
@@ -516,8 +601,18 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                             </p>
                         </div>
                         <div className="rounded-[35px] border border-white/10 bg-white/10 p-10 backdrop-blur-xl transition hover:-translate-y-2">
-                            <svg className="h-16 w-16 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            <svg
+                                className="h-16 w-16 text-purple-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                                />
                             </svg>
                             <h3 className="mt-8 text-3xl font-bold">
                                 Intercambia
@@ -544,11 +639,18 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                 (selectedProduct.images &&
                                     selectedProduct.images.length > 0) ? (
                                     <>
-                                        {selectedProduct.product_images?.[0]?.url || selectedProduct.images?.[0]?.url ? (
+                                        {selectedProduct.product_images?.[0]
+                                            ?.url ||
+                                        selectedProduct.images?.[0]?.url ? (
                                             <img
                                                 src={
-                                                    selectedProduct.product_images?.[currentImgIndex]?.url ||
-                                                    selectedProduct.images?.[currentImgIndex]?.url
+                                                    selectedProduct
+                                                        .product_images?.[
+                                                        currentImgIndex
+                                                    ]?.url ||
+                                                    selectedProduct.images?.[
+                                                        currentImgIndex
+                                                    ]?.url
                                                 }
                                                 className="h-full w-full object-contain transition-all duration-500"
                                                 alt={selectedProduct.name}
@@ -622,7 +724,12 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                         )}
                                         <span className="text-white/40">•</span>
                                         <span className="text-white/70">
-                                            {selectedProduct.province || selectedProduct.user?.address?.province || selectedProduct.user?.address?.city || 'Ubicación no disponible'}
+                                            {selectedProduct.province ||
+                                                selectedProduct.user?.address
+                                                    ?.province ||
+                                                selectedProduct.user?.address
+                                                    ?.city ||
+                                                "Ubicación no disponible"}
                                         </span>
                                     </div>
                                 </div>
@@ -658,7 +765,10 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                                 Usuario
                                             </p>
                                             <Link
-                                                href={route('users.show', selectedProduct.user?.id)}
+                                                href={route(
+                                                    "users.show",
+                                                    selectedProduct.user?.id,
+                                                )}
                                                 className="text-xl font-bold text-white transition hover:text-[#00C896]"
                                             >
                                                 {selectedProduct.user?.name}
@@ -675,7 +785,6 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                                             Chat
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -692,10 +801,16 @@ export default function Welcome({ auth, products, provinces, productTypes, filte
                         </div>
                         <div className="flex flex-col items-center gap-4 md:flex-row md:gap-8">
                             <div className="flex gap-8 text-white/60">
-                                <a href="#" className="transition hover:text-white">
+                                <a
+                                    href="#"
+                                    className="transition hover:text-white"
+                                >
                                     Privacidad
                                 </a>
-                                <a href="/contacto" className="transition hover:text-white">
+                                <a
+                                    href="/contacto"
+                                    className="transition hover:text-white"
+                                >
                                     Ayuda
                                 </a>
                             </div>

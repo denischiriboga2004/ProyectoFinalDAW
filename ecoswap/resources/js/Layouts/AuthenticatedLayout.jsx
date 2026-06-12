@@ -1,4 +1,3 @@
-import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
@@ -13,8 +12,7 @@ export default function AuthenticatedLayout({ header, children }) {
         currentRoute?.startsWith("admin."),
     );
 
-    // Indicador de notificaciones deshabilitado
-    // const unreadCount = user?.unread_notifications_count ?? 0;
+
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -29,14 +27,32 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between">
                         <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
-                                        ♻
+                            {user.role_id === 2 ? (
+                                <Link
+                                    href={route("welcome")}
+                                    className="text-sm font-semibold text-white/70 transition hover:text-white"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
+                                            ♻
+                                        </div>
+                                        <h1 className="text-3xl font-black tracking-tight">
+                                            EcoSwap
+                                        </h1>
                                     </div>
-                                    <h1 className="text-3xl font-black tracking-tight">
-                                        EcoSwap
-                                    </h1>
+                                </Link>
+                            ) : (
+                                <div className="text-sm font-semibold text-white/70">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-[#00C896] to-cyan-400 text-xl font-black text-black shadow-lg">
+                                            ♻
+                                        </div>
+                                        <h1 className="text-3xl tracking-tight" style={{color: "black"}}>
+                                            EcoSwap
+                                        </h1>
+                                    </div>
                                 </div>
+                            )}
 
                             <div
                                 className={`hidden space-x-6 sm:flex sm:items-center text-sm font-medium ${isDashboardRoute ? "text-slate-700" : "text-white/80"}`}
@@ -107,8 +123,6 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:gap-3">
-
-
                             <div className="relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
