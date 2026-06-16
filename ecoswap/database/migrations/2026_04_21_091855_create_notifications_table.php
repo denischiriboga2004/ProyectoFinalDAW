@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('notifications', function (Blueprint $table) {
         $table->id();
 
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('user_id')->constrained()->onDelete('restrict');
 
         $table->string('type');
         $table->text('message');
@@ -32,3 +32,4 @@ return new class extends Migration
         Schema::dropIfExists('notifications');
     }
 };
+

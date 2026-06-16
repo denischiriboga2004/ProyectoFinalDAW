@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('restrict');
 
             $table->string('url');
             $table->boolean('is_main')->default(false);
@@ -31,3 +31,4 @@ return new class extends Migration
         Schema::dropIfExists('product_images');
     }
 };
+

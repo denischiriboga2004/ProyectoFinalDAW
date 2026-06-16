@@ -17,7 +17,7 @@ return new class extends Migration
 
         Schema::table('comments', function (Blueprint $table) {
             $table->unsignedBigInteger('product_id')->nullable()->change();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
         });
     }
 
@@ -32,7 +32,8 @@ return new class extends Migration
 
         Schema::table('comments', function (Blueprint $table) {
             $table->unsignedBigInteger('product_id')->nullable(false)->change();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
         });
     }
 };
+

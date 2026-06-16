@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('messages', function (Blueprint $table) {
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('restrict');
         });
     }
 
@@ -24,3 +24,4 @@ return new class extends Migration
         });
     }
 };
+
