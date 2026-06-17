@@ -46,9 +46,10 @@ class ProductSeeder extends Seeder
                     'status' => 'active',
                 ]);
 
+
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'url' => 'https://picsum.photos/600/400?random=' . ($product->id + $i),
+                    'url' => "https://loremflickr.com/600/400/product?lock=" . $product->id,
                     'is_main' => true,
                 ]);
             }
